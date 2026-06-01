@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>时光胶囊故事墙</h2>
+{% for story in stories %}
+<div class="card">
+    <img src="{{ story.item_image }}">
+    <p>{{ story.story_content }}</p>
+    <small>{{ story.create_time.strftime('%Y-%m-%d') }}</small>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,14 @@
+# 忽略 PyCharm 配置文件
+**/notes/.idea/
+**/.idea/
+
+# 忽略 Python 虚拟环境
+**/notes/.venv/
+**/.venv/
+
+# 忽略运行缓存
+**/__pycache__/
+**/*.pyc
+
+# 忽略本地数据库
+**/notes/instance/

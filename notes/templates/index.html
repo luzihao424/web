@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>校园闲置时光胶囊</h2>
+<p>闲置换故事，旧物藏回忆</p>
+
+<h3>可申请的闲置物品</h3>
+{% if items %}
+    {% for item in items %}
+    <div class="card">
+        <a href="{{ url_for('item.detail', item_id=item.id) }}" style="text-decoration: none; color: inherit;">
+            {% if item.image_url %}
+            <img src="{{ item.image_url }}" alt="{{ item.title }}">
+            {% endif %}
+            <h4>{{ item.title }}</h4>
+            <p>{{ item.description[:50] }}...</p>
+            <p class="text-muted">胶囊故事：{{ item.story[:30] }}...</p>
+            <p class="text-muted">模式：{{ item.mode }}｜状态：{{ item.status }}</p>
+        </a>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="card">
+        <p>暂时还没有闲置物品，快来发布第一个吧！</p>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>个人中心</h2>
+<p>昵称：{{ current_user.nickname }}</p>
+<p>学号：{% if current_user.is_private %}***{% else %}{{ current_user.student_id }}{% endif %}</p>
+<a href="{{ url_for('profile.toggle_private') }}" class="btn btn-sm">
+    {% if current_user.is_private %}公开信息{% else %}隐藏信息{% endif %}
+</a>
+
+<h3>我的发布</h3>
+{% for item in items %}
+<div class="card">
+    <p>{{ item.title }}｜状态：{{ item.status }}</p>
+
+    {% if item.status == "available" %}
+        {% set found_pending = false %}
+        {% for exchange in item.exchanges %}
+            {% if exchange.status == "pending" %}
+                {% set found_pending = true %}
+                <p style="color:#ff9f69; margin-top:10px;">有一条待处理申请：{{ exchange.message }}</p>
+                <a href="{{ url_for('item.approve', ex_id=exchange.id) }}" class="btn btn-sm">同意申请</a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</div>
+{% endfor %}
+
+<h3>我的申请</h3>
+{% for ap in applies %}
+<div class="card">
+    <p>申请物品ID：{{ ap.item_id }}｜状态：{{ ap.status }}</p>
+    {% if ap.status == "approved" %}
+        <a href="{{ url_for('item.complete', ex_id=ap.id) }}" class="btn">确认完成</a>
+    {% endif %}
+</div>
+{% endfor %}
+{% endblock %}

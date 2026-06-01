@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>发布闲置物品</h2>
+<form method="post">
+    {{ form.hidden_tag() }}
+    {{ form.title.label }}{{ form.title() }}
+    {{ form.description.label }}{{ form.description() }}
+    {{ form.story.label }}{{ form.story() }}
+    {{ form.image_url.label }}{{ form.image_url() }}
+    {{ form.mode.label }}{{ form.mode() }}
+    {{ form.want_item.label }}{{ form.want_item() }}
+    {{ form.borrow_days.label }}{{ form.borrow_days() }}
+    {{ form.submit(class="btn") }}
+</form>
+{% endblock %}
