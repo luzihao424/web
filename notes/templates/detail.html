@@ -5,7 +5,15 @@
     <img src="{{ item.image_url }}">
     <p><strong>描述：</strong>{{ item.description }}</p>
     <p><strong>胶囊故事：</strong>{{ item.story }}</p>
-    <p><strong>模式：</strong>{{ item.mode }}</p>
+    <p><strong>交易模式：</strong>{{ item.mode }}
+    {% if item.mode == "以物换物" and item.want_item %}
+        （想换：{{ item.want_item }}）
+    {% elif item.mode == "免费借用" and item.borrow_days %}
+        （需要借用：{{ item.borrow_days }} 天）
+    {% elif item.mode == "正常买卖" and item.price %}
+        （金额：￥{{ "%.2f"|format(item.price) }} 元）
+    {% endif %}
+    </p>
     {% if current_user.is_authenticated and item.status=="available" and item.publisher_id!=current_user.id %}
     <form method="post" action="{{ url_for('item.exchange',item_id=item.id) }}">
         {{ form.hidden_tag() }}

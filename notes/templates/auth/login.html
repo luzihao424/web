@@ -8,17 +8,20 @@
     {{ form.hidden_tag() }}
 
     <div class="form-group">
-        {{ form.student_id.label(class="form-label") }}
-        {{ form.student_id(class="form-input" + (" is-invalid" if form.student_id.errors else ""), placeholder="请输入学号") }}
-        {% for err in form.student_id.errors %}
+        {{ form.email.label(class="form-label") }}
+        <div style="display: flex; gap: 10px;">
+            {{ form.email(id="email-input", class="form-input" + (" is-invalid" if form.email.errors else ""), placeholder="请输入邮箱") }}
+            <button type="button" id="send-code-btn" class="btn" style="margin-top: 0; white-space: nowrap; font-size: 14px; padding: 10px 15px; border-radius: 10px;">获取验证码</button>
+        </div>
+        {% for err in form.email.errors %}
             <div class="error-text">{{ err }}</div>
         {% endfor %}
     </div>
 
     <div class="form-group">
-        {{ form.password.label(class="form-label") }}
-        {{ form.password(class="form-input" + (" is-invalid" if form.password.errors else ""), placeholder="请输入密码") }}
-        {% for err in form.password.errors %}
+        {{ form.code.label(class="form-label") }}
+        {{ form.code(class="form-input" + (" is-invalid" if form.code.errors else ""), placeholder="请输入6位验证码") }}
+        {% for err in form.code.errors %}
             <div class="error-text">{{ err }}</div>
         {% endfor %}
     </div>
@@ -27,4 +30,53 @@
         {{ form.submit(class="btn") }}
     </div>
 </form>
+
+<script>
+document.getElementById('send-code-btn').addEventListener('click', function() {
+    const email = document.getElementById('email-input').value;
+    if (!email) {
+        alert('请先输入邮箱地址！');
+        return;
+    }
+    
+    const btn = this;
+    btn.disabled = true;
+    btn.innerText = '发送中...';
+    
+    fetch('{{ url_for("auth.send_code") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: email, action: 'login' })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            let countdown = 60;
+            const timer = setInterval(() => {
+                countdown--;
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    btn.innerText = '获取验证码';
+                } else {
+                    btn.innerText = `${countdown}秒后重试`;
+                }
+            }, 1000);
+        } else {
+            alert(data.message || '发送失败，请稍后重试！');
+            btn.disabled = false;
+            btn.innerText = '获取验证码';
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('发送验证码失败，请重试！');
+        btn.disabled = false;
+        btn.innerText = '获取验证码';
+    });
+});
+</script>
 {% endblock %}

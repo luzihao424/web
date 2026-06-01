@@ -14,7 +14,17 @@
             <h4>{{ item.title }}</h4>
             <p>{{ item.description[:50] }}...</p>
             <p class="text-muted">胶囊故事：{{ item.story[:30] }}...</p>
-            <p class="text-muted">模式：{{ item.mode }}｜状态：{{ item.status }}</p>
+            <p class="text-muted">
+                模式：{{ item.mode }}
+                {% if item.mode == "以物换物" and item.want_item %}
+                    （想换：{{ item.want_item }}）
+                {% elif item.mode == "免费借用" and item.borrow_days %}
+                    （借用：{{ item.borrow_days }}天）
+                {% elif item.mode == "正常买卖" and item.price %}
+                    （金额：￥{{ "%.2f"|format(item.price) }}元）
+                {% endif %}
+                ｜状态：可申请
+            </p>
         </a>
     </div>
     {% endfor %}
