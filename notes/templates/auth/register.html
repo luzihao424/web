@@ -1,11 +1,38 @@
 {% extends "base.html" %}
+
+{% block title %}注册{% endblock %}
+
 {% block content %}
 <h2>注册</h2>
 <form method="post">
     {{ form.hidden_tag() }}
-    {{ form.student_id.label }}{{ form.student_id() }}
-    {{ form.nickname.label }}{{ form.nickname() }}
-    {{ form.password.label }}{{ form.password() }}
-    {{ form.submit(class="btn") }}
+
+    <div class="form-group">
+        {{ form.student_id.label(class="form-label") }}
+        {{ form.student_id(class="form-input" + (" is-invalid" if form.student_id.errors else ""), placeholder="请输入学号") }}
+        {% for err in form.student_id.errors %}
+            <div class="error-text">{{ err }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        {{ form.nickname.label(class="form-label") }}
+        {{ form.nickname(class="form-input" + (" is-invalid" if form.nickname.errors else ""), placeholder="请输入昵称") }}
+        {% for err in form.nickname.errors %}
+            <div class="error-text">{{ err }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-input" + (" is-invalid" if form.password.errors else ""), placeholder="请输入密码") }}
+        {% for err in form.password.errors %}
+            <div class="error-text">{{ err }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        {{ form.submit(class="btn") }}
+    </div>
 </form>
 {% endblock %}
