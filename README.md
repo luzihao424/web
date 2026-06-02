@@ -4,6 +4,7 @@
 - 进入`...\web\notes`目录下
 
 ## 2. 配置虚拟环境
+- 使用`powershell`终端
 ```powershell
 python -m venv venv
 
