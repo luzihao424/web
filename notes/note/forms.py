@@ -1,19 +1,50 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, IntegerField, FloatField, SelectField, SubmitField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length, Regexp
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 class RegisterForm(FlaskForm):
-    email = StringField("邮箱", validators=[DataRequired()])
-    student_id = StringField("学号", validators=[DataRequired()])
-    nickname = StringField("昵称", validators=[DataRequired(), Length(2,20)])
-    contact_info = StringField("联系方式 (如微信/QQ)", validators=[DataRequired(), Length(2,100)])
-    code = StringField("验证码", validators=[DataRequired()])
+    student_id = StringField(
+        "学号", 
+        validators=[
+            DataRequired("学号不能为空"), 
+            Length(4, 20, message="学号长度必须在 4 到 20 位之间"),
+            Regexp(r'^[a-zA-Z0-9]+$', message="学号只能包含字母和数字")
+        ]
+    )
+    password = PasswordField(
+        "密码", 
+        validators=[
+            DataRequired("密码不能为空"), 
+            Length(6, 40, message="密码长度必须至少为 6 位")
+        ]
+    )
+    nickname = StringField(
+        "昵称", 
+        validators=[
+            DataRequired("昵称不能为空"), 
+            Length(2, 20, message="昵称长度必须在 2 到 20 位之间")
+        ]
+    )
+    email = StringField(
+        "邮箱", 
+        validators=[
+            DataRequired("邮箱不能为空"), 
+            Regexp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', message="请输入有效的邮箱地址")
+        ]
+    )
+    contact_info = StringField(
+        "联系方式 (如微信/QQ/手机)", 
+        validators=[
+            DataRequired("联系方式不能为空"), 
+            Length(2, 100, message="联系方式长度必须在 2 到 100 位之间")
+        ]
+    )
     submit = SubmitField("注册")
 
 class LoginForm(FlaskForm):
-    email = StringField("邮箱", validators=[DataRequired()])
-    code = StringField("验证码", validators=[DataRequired()])
+    student_id = StringField("学号", validators=[DataRequired("学号不能为空")])
+    password = PasswordField("密码", validators=[DataRequired("密码不能为空")])
     submit = SubmitField("登录")
 
 class ItemForm(FlaskForm):
