@@ -1,7 +1,7 @@
 ## 本地部署
 ## 1.配置python3.14
 - `git clone` 到本地
-- 进入`...\web\notes`目录下
+- 进入`...\web\note`目录下
 
 ## 2. 配置虚拟环境
 - 使用`powershell`终端
