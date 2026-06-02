@@ -9,8 +9,8 @@ def send_verification_email_async(to_email, code):
     """
     smtp_server = "smtp.qq.com"
     smtp_port = 465
-    sender_email = "2691285194@qq.com"
-    sender_password = "pfzhrllczhdbdicg"
+    sender_email = "2372660478@qq.com"
+    sender_password = "fbefhtbrgafsdjcg"
     
     subject = "校园闲置时光胶囊 - 登录验证码"
     content = f"""
@@ -43,9 +43,10 @@ def send_verification_email_async(to_email, code):
             server.login(sender_email, sender_password)
             server.sendmail(sender_email, [to_email], msg.as_string())
             server.quit()
-            print(f"[Email Service] Code {code} successfully sent to {to_email}")
+            print(f"[Email Service] Code {code} successfully sent to {to_email}", flush=True)
         except Exception as e:
-            print(f"[Email Service] Failed to send email to {to_email}: {e}")
+            print(f"[Email Service] Failed to send email to {to_email}: {e}", flush=True)
+            print(f"\n========================================\n[LOCAL DEV] 邮件发送失败，验证码为：{code}\n请直接在页面输入该验证码，或在调试控制台查看。\n========================================\n", flush=True)
 
     # Run in background thread to avoid blocking the main Flask thread
     thread = threading.Thread(target=send_action)
