@@ -1,84 +1,119 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>发布闲置物品</h2>
-<form method="post" enctype="multipart/form-data" class="card" style="max-width: 600px; margin: 0 auto; padding: 25px;">
-    {{ form.hidden_tag() }}
+<div class="auth-form-card" style="max-width: 700px; margin: 20px auto;">
+    <h2 style="text-align: center; color: var(--primary-hover); font-size: 26px; margin-bottom: 8px;">⏳ 密封新的时光胶囊</h2>
+    <p class="text-muted" style="text-align: center; margin-bottom: 30px; font-family: var(--font-serif);">封存旧物回忆，流传温暖故事</p>
     
-    <div class="form-group" style="margin-bottom: 15px;">
-        {{ form.title.label(style="display:block; margin-bottom:5px; font-weight:bold;") }}
-        {{ form.title(class="form-input") }}
-        {% for err in form.title.errors %}
-            <div class="error-text" style="color:red; font-size:12px;">{{ err }}</div>
-        {% endfor %}
-    </div>
-
-    <div class="form-group" style="margin-bottom: 15px;">
-        {{ form.description.label(style="display:block; margin-bottom:5px; font-weight:bold;") }}
-        {{ form.description(class="form-input", rows="3") }}
-        {% for err in form.description.errors %}
-            <div class="error-text" style="color:red; font-size:12px;">{{ err }}</div>
-        {% endfor %}
-    </div>
-
-    <div class="form-group" style="margin-bottom: 15px;">
-        {{ form.story.label(style="display:block; margin-bottom:5px; font-weight:bold;") }}
-        {{ form.story(class="form-input", rows="3", placeholder="分享一下关于这件物品的故事，它将在时光胶囊完成时被永久保存...") }}
-        {% for err in form.story.errors %}
-            <div class="error-text" style="color:red; font-size:12px;">{{ err }}</div>
-        {% endfor %}
-    </div>
-
-    <div class="form-group" style="margin-bottom: 15px;">
-        {{ form.image.label(style="display:block; margin-bottom:5px; font-weight:bold;") }}
-        {{ form.image(id="image-file-input", class="form-input") }}
-        {% for err in form.image.errors %}
-            <div class="error-text" style="color:red; font-size:12px;">{{ err }}</div>
-        {% endfor %}
-        <div id="image-preview-container" style="display:none; margin-top: 10px;">
-            <p class="text-muted" style="font-size:13px; margin-bottom:5px;">图片预览：</p>
-            <img id="image-preview" src="" style="max-height: 180px; max-width: 100%; border-radius: 12px; border: 1px solid var(--border); object-fit: cover;">
+    <!-- 步骤条 -->
+    <div style="display: flex; justify-content: space-between; margin-bottom: 35px; border-bottom: 1px solid var(--border); padding-bottom: 15px; font-size: 13px; color: var(--text-muted); font-weight: 600;">
+        <div style="display: flex; align-items: center; gap: 6px; color: var(--primary-hover);">
+            <span style="background: var(--primary-light); color: var(--primary-hover); width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%;">1</span>
+            放入回忆
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; color: var(--primary-hover);">
+            <span style="background: var(--primary-light); color: var(--primary-hover); width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%;">2</span>
+            撰写故事
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; color: var(--primary-hover);">
+            <span style="background: var(--primary-light); color: var(--primary-hover); width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%;">3</span>
+            设定流转
         </div>
     </div>
 
-    <div class="form-group" style="margin-bottom: 15px;">
-        {{ form.mode.label(style="display:block; margin-bottom:5px; font-weight:bold;") }}
-        {{ form.mode(id="mode-select", class="form-input") }}
-        {% for err in form.mode.errors %}
-            <div class="error-text" style="color:red; font-size:12px;">{{ err }}</div>
-        {% endfor %}
-    </div>
+    <form method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        
+        <!-- 步骤一 -->
+        <h4 style="font-family: var(--font-serif); margin-bottom: 15px; border-left: 3px solid var(--primary); padding-left: 8px; color: var(--text-main);">第一步：放入回忆物品</h4>
+        
+        <div class="form-group">
+            {{ form.title.label(style="font-weight:600;") }}
+            {{ form.title(class="form-input", placeholder="给你的时光胶囊取一个有故事的名字") }}
+            {% for err in form.title.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
 
-    <div id="want-item-group" class="form-group" style="margin-bottom: 15px;">
-        {{ form.want_item.label(style="display:block; margin-bottom:5px; font-weight:bold;") }}
-        {{ form.want_item(id="want-item-input", class="form-input", placeholder="请输入您想换的物品名称") }}
-        {% for err in form.want_item.errors %}
-            <div class="error-text" style="color:red; font-size:12px;">{{ err }}</div>
-        {% endfor %}
-    </div>
+        <div class="form-group">
+            {{ form.image.label(style="font-weight:600;") }}
+            <div style="position: relative; border: 2px dashed var(--border); border-radius: var(--radius-md); padding: 20px; text-align: center; background: var(--bg); transition: border-color 0.25s ease;">
+                {{ form.image(id="image-file-input", style="cursor: pointer; opacity: 0; position: absolute; top:0; left:0; width:100%; height:100%; z-index:10;") }}
+                <div id="upload-placeholder">
+                    <span style="font-size: 24px;">📷</span>
+                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-muted);">点击或拖拽上传回忆照片</p>
+                </div>
+                <div id="image-preview-container" style="display:none; position:relative; z-index:15;">
+                    <img id="image-preview" src="" style="max-height: 200px; max-width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--border); object-fit: cover; margin: 0 auto;">
+                    <p style="margin-top: 8px; font-size: 11px; color: var(--text-muted); font-weight: 600;">已选择新相片 (点击可重新选择)</p>
+                </div>
+            </div>
+            {% for err in form.image.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
 
-    <div id="borrow-days-group" class="form-group" style="margin-bottom: 15px;">
-        {{ form.borrow_days.label(style="display:block; margin-bottom:5px; font-weight:bold;") }}
-        {{ form.borrow_days(id="borrow-days-input", class="form-input", type="number", min="1", placeholder="请输入借用时长（天）") }}
-        {% for err in form.borrow_days.errors %}
-            <div class="error-text" style="color:red; font-size:12px;">{{ err }}</div>
-        {% endfor %}
-    </div>
+        <!-- 步骤二 -->
+        <h4 style="font-family: var(--font-serif); margin: 30px 0 15px; border-left: 3px solid var(--primary); padding-left: 8px; color: var(--text-main);">第二步：书写尘封的回忆</h4>
+        
+        <div class="form-group">
+            {{ form.description.label(style="font-weight:600;") }}
+            {{ form.description(class="form-input", rows="3", placeholder="简单介绍一下这件物品的品牌、规格、新旧程度及当前状态...") }}
+            {% for err in form.description.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
 
-    <div id="price-group" class="form-group" style="margin-bottom: 15px;">
-        {{ form.price.label(style="display:block; margin-bottom:5px; font-weight:bold;") }}
-        {{ form.price(id="price-input", class="form-input", type="number", step="0.01", min="0.01", placeholder="请输入交易金额（元）") }}
-        {% for err in form.price.errors %}
-            <div class="error-text" style="color:red; font-size:12px;">{{ err }}</div>
-        {% endfor %}
-    </div>
+        <div class="form-group">
+            {{ form.story.label(style="font-weight:600;") }}
+            {{ form.story(class="form-input", rows="4", placeholder="写下属于这件物品的独家回忆。例如：这件吉他陪伴我度过了整个大一的迎新晚会，见证了我的成长，希望下一任主人能继续带着它去追寻音乐的梦想...") }}
+            {% for err in form.story.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
 
-    <div class="form-group" style="margin-top: 20px;">
-        {{ form.submit(class="btn", style="width:100%; padding: 12px;") }}
-    </div>
-</form>
+        <!-- 步骤三 -->
+        <h4 style="font-family: var(--font-serif); margin: 30px 0 15px; border-left: 3px solid var(--primary); padding-left: 8px; color: var(--text-main);">第三步：设定流转约定</h4>
+        
+        <div class="form-group">
+            {{ form.mode.label(style="font-weight:600;") }}
+            {{ form.mode(id="mode-select", class="form-input") }}
+            {% for err in form.mode.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
+
+        <div id="want-item-group" class="form-group" style="transition: all 0.3s ease;">
+            {{ form.want_item.label(style="font-weight:600;") }}
+            {{ form.want_item(id="want-item-input", class="form-input", placeholder="请输入您想换的物品名称") }}
+            {% for err in form.want_item.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
+
+        <div id="borrow-days-group" class="form-group" style="transition: all 0.3s ease;">
+            {{ form.borrow_days.label(style="font-weight:600;") }}
+            {{ form.borrow_days(id="borrow-days-input", class="form-input", type="number", min="1", placeholder="请输入借用时长（天）") }}
+            {% for err in form.borrow_days.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
+
+        <div id="price-group" class="form-group" style="transition: all 0.3s ease;">
+            {{ form.price.label(style="font-weight:600;") }}
+            {{ form.price(id="price-input", class="form-input", type="number", step="0.01", min="0.01", placeholder="请输入流转金额（元）") }}
+            {% for err in form.price.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group" style="margin-top: 35px;">
+            {{ form.submit(class="btn", style="width:100%; padding: 14px 20px; font-size: 16px;", value="🔒 封存时光胶囊") }}
+        </div>
+    </form>
+</div>
 
 <script>
-// Image preview logic
+// 图片预览及占位图控制逻辑
 document.getElementById('image-file-input').addEventListener('change', function() {
     const file = this.files[0];
     if (file) {
@@ -87,14 +122,16 @@ document.getElementById('image-file-input').addEventListener('change', function(
             const previewImg = document.getElementById('image-preview');
             previewImg.src = e.target.result;
             document.getElementById('image-preview-container').style.display = 'block';
+            document.getElementById('upload-placeholder').style.display = 'none';
         }
         reader.readAsDataURL(file);
     } else {
         document.getElementById('image-preview-container').style.display = 'none';
+        document.getElementById('upload-placeholder').style.display = 'block';
     }
 });
 
-// Dynamic form fields locking/unlocking logic
+// 表单联动逻辑
 const modeSelect = document.getElementById('mode-select');
 const wantItemInput = document.getElementById('want-item-input');
 const borrowDaysInput = document.getElementById('borrow-days-input');
@@ -107,48 +144,39 @@ const priceGroup = document.getElementById('price-group');
 function updateFormFields() {
     const mode = modeSelect.value;
     
-    // Default: disable and hide everything first
+    // 隐藏/置灰所有动态输入项
     wantItemInput.disabled = true;
     wantItemInput.required = false;
-    wantItemGroup.style.opacity = '0.5';
-    wantItemInput.placeholder = "此模式下无需填写";
+    wantItemGroup.style.display = 'none';
     if (mode !== '以物换物') wantItemInput.value = '';
 
     borrowDaysInput.disabled = true;
     borrowDaysInput.required = false;
-    borrowDaysGroup.style.opacity = '0.5';
-    borrowDaysInput.placeholder = "此模式下无需填写";
+    borrowDaysGroup.style.display = 'none';
     if (mode !== '免费借用') borrowDaysInput.value = '';
 
     priceInput.disabled = true;
     priceInput.required = false;
-    priceGroup.style.opacity = '0.5';
-    priceInput.placeholder = "此模式下无需填写";
+    priceGroup.style.display = 'none';
     if (mode !== '正常买卖') priceInput.value = '';
 
-    // Enable based on selected mode
+    // 根据选择显示并启用特定项
     if (mode === '以物换物') {
         wantItemInput.disabled = false;
         wantItemInput.required = true;
-        wantItemGroup.style.opacity = '1';
-        wantItemInput.placeholder = "请输入您想换的物品名称";
+        wantItemGroup.style.display = 'block';
     } else if (mode === '免费借用') {
         borrowDaysInput.disabled = false;
         borrowDaysInput.required = true;
-        borrowDaysGroup.style.opacity = '1';
-        borrowDaysInput.placeholder = "请输入借用时长（天，最小值为1）";
+        borrowDaysGroup.style.display = 'block';
     } else if (mode === '正常买卖') {
         priceInput.disabled = false;
         priceInput.required = true;
-        priceGroup.style.opacity = '1';
-        priceInput.placeholder = "请输入交易金额（元）";
+        priceGroup.style.display = 'block';
     }
 }
 
-// Attach event listener
 modeSelect.addEventListener('change', updateFormFields);
-
-// Run on page load
 updateFormFields();
 </script>
 {% endblock %}

@@ -1,0 +1,55 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<div class="content-header">
+    <h1 class="content-title">时光胶囊故事墙审核</h1>
+</div>
+
+<div class="glass-card">
+    <div class="table-responsive">
+        {% if stories %}
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">ID</th>
+                        <th style="width: 120px;">胶囊图片</th>
+                        <th>故事故事内容</th>
+                        <th>归档时间</th>
+                        <th style="width: 120px; text-align: center;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for story in stories %}
+                        <tr>
+                            <td>{{ story.id }}</td>
+                            <td>
+                                {% if story.item_image %}
+                                    <img src="{{ story.item_image }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);" alt="故事图片">
+                                {% else %}
+                                    <span style="color: var(--text-mute); font-size: 13px;">无图片</span>
+                                {% endif %}
+                            </td>
+                            <td style="font-size: 14px; line-height: 1.6; max-width: 400px; word-break: break-all;">
+                                {{ story.story_content }}
+                            </td>
+                            <td style="font-size: 13px; color: var(--text-mute);">
+                                {{ story.create_time.strftime('%Y-%m-%d %H:%M') if story.create_time else '-' }}
+                            </td>
+                            <td style="text-align: center;">
+                                <form action="{{ url_for('admin.delete_story', story_id=story.id) }}" method="post" onsubmit="return confirm('警告：确定要彻底删除该时光胶囊故事吗？删除后前台匿名故事墙将不再展示此内容！')">
+                                    <button type="submit" class="btn-danger">删除隐藏</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="text-align: center; padding: 40px 0; color: var(--text-mute);">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 10px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <p>目前故事墙中尚无归档的故事记录</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

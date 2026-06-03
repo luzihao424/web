@@ -1,25 +1,92 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-    <h2>{{ item.title }}</h2>
-    <img src="{{ item.image_url }}">
-    <p><strong>描述：</strong>{{ item.description }}</p>
-    <p><strong>胶囊故事：</strong>{{ item.story }}</p>
-    <p><strong>交易模式：</strong>{{ item.mode }}
-    {% if item.mode == "以物换物" and item.want_item %}
-        （想换：{{ item.want_item }}）
-    {% elif item.mode == "免费借用" and item.borrow_days %}
-        （需要借用：{{ item.borrow_days }} 天）
-    {% elif item.mode == "正常买卖" and item.price %}
-        （金额：￥{{ "%.2f"|format(item.price) }} 元）
-    {% endif %}
-    </p>
-    {% if current_user.is_authenticated and item.status=="available" and item.publisher_id!=current_user.id %}
-    <form method="post" action="{{ url_for('item.exchange',item_id=item.id) }}">
-        {{ form.hidden_tag() }}
-        {{ form.message.label }}{{ form.message() }}
-        {{ form.submit(class="btn") }}
-    </form>
-    {% endif %}
+<div class="detail-container">
+    <!-- 左侧栏：物品展示 -->
+    <div style="position: sticky; top: 20px;">
+        <div class="polaroid-card" style="cursor: default; transform: none !important; hover: none;">
+            <div class="polaroid-image-wrapper" style="aspect-ratio: 1/1; margin-bottom: 20px;">
+                {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}" style="object-fit: contain;">
+                {% else %}
+                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#FAF8F5; color:var(--text-muted); font-size:14px; font-family:var(--font-serif);">
+                        📷 无记忆照片
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 12px;">
+                <div>
+                    <span class="text-muted">流转约定：</span>
+                    {% if item.mode == "以物换物" %}
+                        <span class="capsule-badge capsule-barter">🔄 以物换物{% if item.want_item %}（想换：{{ item.want_item }}）{% endif %}</span>
+                    {% elif item.mode == "免费借用" %}
+                        <span class="capsule-badge capsule-borrow">🤝 免费借用{% if item.borrow_days %}（可借用：{{ item.borrow_days }}天）{% endif %}</span>
+                    {% elif item.mode == "正常买卖" %}
+                        <span class="capsule-badge capsule-buy">💰 正常买卖{% if item.price %}（金额：￥{{ "%.2f"|format(item.price) }}）{% endif %}</span>
+                    {% endif %}
+                </div>
+                
+                <div style="border-top: 1px dashed var(--border); padding-top: 12px; font-size: 14px; color: var(--text-muted);">
+                    <p>🎒 <b>时光保管人</b>：{{ item.publisher.nickname }}</p>
+                    <p style="margin-top: 4px;">📅 <b>封存时间</b>：{{ item.create_time.strftime('%Y-%m-%d') }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary" style="width: 100%;">🔙 返回时光胶囊库</a>
+        </div>
+    </div>
+
+    <!-- 右侧栏：日记回忆故事 & 申请表单 -->
+    <div class="diary-paper">
+        <div class="diary-title">{{ item.title }}</div>
+        
+        <div style="margin-bottom: 24px;">
+            <span style="font-weight: bold; color: var(--text-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">📋 物品描述</span>
+            <div style="margin-top: 8px; font-size: 15px; color: var(--text-main); line-height: 1.6; padding-left: 10px; border-left: 2px solid var(--primary-light);">
+                {{ item.description }}
+            </div>
+        </div>
+
+        <div style="margin-bottom: 40px;">
+            <span style="font-weight: bold; color: var(--text-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">⏳ 胶囊里的回忆故事</span>
+            <div class="diary-story-content" style="margin-top: 14px;">
+                <p>{{ item.story }}</p>
+            </div>
+        </div>
+
+        <!-- 申请表单 -->
+        {% if current_user.is_authenticated and item.status == "available" and item.publisher_id != current_user.id %}
+            <div style="border-top: 2px dashed rgba(244, 63, 94, 0.2); padding-top: 30px; margin-top: 20px; background: rgba(253, 251, 247, 0.5); border-radius: var(--radius-md); padding: 20px;">
+                <h4 style="font-family: var(--font-serif); color: var(--primary-hover); margin-bottom: 12px; font-size: 18px;">💡 申请开启此时光胶囊</h4>
+                <p class="text-muted" style="font-size: 13px; margin-bottom: 15px; line-height: 1.5;">请给时光保管人留下一段话，说明你想申请它的原因或你的诚意吧...</p>
+                
+                <form method="post" action="{{ url_for('item.exchange', item_id=item.id) }}">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.message.label(style="display:none;") }}
+                        {{ form.message(class="form-input", placeholder="例如：我很喜欢这本书，看完后我会继续写下新故事传下去...", rows="3") }}
+                    </div>
+                    <div>
+                        {{ form.submit(class="btn", style="width: 100%;") }}
+                    </div>
+                </form>
+            </div>
+        {% elif not current_user.is_authenticated %}
+            <div style="text-align: center; border-top: 2px dashed rgba(244, 63, 94, 0.2); padding-top: 30px; margin-top: 20px;">
+                <p class="text-muted" style="font-size: 14px; margin-bottom: 15px;">🔒 登录后即可申请开启此时光胶囊，续写它的故事。</p>
+                <a href="{{ url_for('auth.login') }}" class="btn">开启登录</a>
+            </div>
+        {% elif item.publisher_id == current_user.id %}
+            <div style="text-align: center; border-top: 2px dashed rgba(244, 63, 94, 0.2); padding-top: 30px; margin-top: 20px; background: #FFFDF9; border-radius: var(--radius-md); padding: 15px;">
+                <p style="color: var(--primary-hover); font-size: 14px; font-weight: 500;">👋 这是你封存的时光胶囊哦！你可以在个人中心查看它的对接申请进度。</p>
+            </div>
+        {% elif item.status != "available" %}
+            <div style="text-align: center; border-top: 2px dashed rgba(244, 63, 94, 0.2); padding-top: 30px; margin-top: 20px; background: var(--border); border-radius: var(--radius-md); padding: 15px;">
+                <p class="text-muted" style="font-size: 14px; font-weight: 500;">🔒 时光胶囊已被他人开启，故事对接流转中...</p>
+            </div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

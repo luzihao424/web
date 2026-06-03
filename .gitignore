@@ -12,3 +12,7 @@
 
 # 忽略本地数据库
 **/notes/instance/
+
+# 忽略用户上传的文件
+**/notes/static/uploads/
+**/notes/note/static/uploads/
