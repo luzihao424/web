@@ -28,8 +28,10 @@ def resolve_db_host_to_ipv4(uri):
             parsed.query,
             parsed.fragment
         ))
-    except Exception:
-        # 如果解析失败（例如离线环境），回退到原 URI
+    except Exception as e:
+        # 如果解析失败，打印错误原因以便调试，并回退到原 URI
+        import sys
+        print(f"DEBUG: resolve_db_host_to_ipv4 failed with error: {e}", file=sys.stderr)
         return uri
 
 class BaseConfig:
