@@ -1,14 +1,3 @@
-import socket
-
-orig_getaddrinfo = socket.getaddrinfo
-def getaddrinfo_ipv4_only(host, port, family=0, type=0, proto=0, flags=0):
-    if family == socket.AF_UNSPEC:
-        family = socket.AF_INET
-    return orig_getaddrinfo(host, port, family, type, proto, flags)
-socket.getaddrinfo = getaddrinfo_ipv4_only
-
-
-
 import os
 from dotenv import load_dotenv
 
