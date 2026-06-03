@@ -16,3 +16,6 @@
 # 忽略用户上传的文件
 **/notes/static/uploads/
 **/notes/note/static/uploads/
+
+# 忽略agent相关文件
+**/.agent
