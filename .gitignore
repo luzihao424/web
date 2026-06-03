@@ -16,3 +16,7 @@
 # 忽略用户上传的文件
 **/notes/static/uploads/
 **/notes/note/static/uploads/
+
+# 忽略本地导入脚本与 AI 助手本地技能配置
+import_issues.ps1
+.agent/
