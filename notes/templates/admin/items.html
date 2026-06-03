@@ -11,7 +11,7 @@
         <input type="text" name="q" value="{{ q }}" class="search-input" placeholder="输入物品名称、描述关键字进行搜索...">
         <button type="submit" class="btn-action">搜索</button>
         {% if q %}
-            <a href="{{ url_for('admin.items') }}" class="btn-action" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color:#fff; text-decoration:none; display:flex; align-items:center; justify-content:center;">清除</a>
+            <a href="{{ url_for('admin.items') }}" class="btn-action btn-secondary" style="text-decoration:none; display:flex; align-items:center; justify-content:center;">清除</a>
         {% endif %}
     </form>
 
@@ -21,7 +21,7 @@
                 <thead>
                     <tr>
                         <th style="width: 60px;">ID</th>
-                        <th style="width: 100px;">图片</th>
+                        <th style="width: 90px; text-align: center;">图片</th>
                         <th>物品名称</th>
                         <th>发布者</th>
                         <th>交换模式</th>
@@ -34,35 +34,43 @@
                     {% for item in items %}
                         <tr>
                             <td>{{ item.id }}</td>
-                            <td>
+                            <td style="text-align: center;">
                                 {% if item.image_url %}
-                                    <img src="{{ item.image_url }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);" alt="物品缩略图">
+                                    <img src="{{ item.image_url }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-color); box-shadow: 0 2px 6px rgba(139, 92, 26, 0.05);" alt="物品缩略图">
                                 {% else %}
-                                    <span style="color: var(--text-mute); font-size: 13px;">无图片</span>
+                                    <span style="color: var(--text-mute); font-size: 12px; font-style: italic;">无图片</span>
                                 {% endif %}
                             </td>
-                            <td style="font-weight: 600; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item.title }}">
+                            <td style="font-weight: 700; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item.title }}">
                                 {{ item.title }}
                             </td>
                             <td>
-                                <span style="font-weight: 500;">{{ item.publisher.nickname }}</span><br>
-                                <span style="font-size: 12px; color: var(--text-mute);">学号: {{ item.publisher.student_id }}</span>
+                                <span style="font-weight: 600;">{{ item.publisher.nickname }}</span><br>
+                                <span style="font-size: 11px; color: var(--text-mute); font-family: monospace;">学号: {{ item.publisher.student_id }}</span>
                             </td>
                             <td>
-                                <span style="background: rgba(255, 159, 105, 0.1); color: var(--accent); padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 600;">
-                                    {{ item.mode }}
-                                </span>
+                                {% if item.mode == "以物换物" %}
+                                    <span class="capsule-badge capsule-barter" style="font-size: 11px; font-weight: bold; border-radius: 6px; padding: 4px 8px;">🔄 换物</span>
+                                {% elif item.mode == "免费借用" %}
+                                    <span class="capsule-badge capsule-borrow" style="font-size: 11px; font-weight: bold; border-radius: 6px; padding: 4px 8px;">🤝 借用</span>
+                                {% elif item.mode == "正常买卖" %}
+                                    <span class="capsule-badge capsule-buy" style="font-size: 11px; font-weight: bold; border-radius: 6px; padding: 4px 8px;">💰 流转</span>
+                                {% else %}
+                                    <span class="capsule-badge capsule-barter" style="font-size: 11px; font-weight: bold; border-radius: 6px; padding: 4px 8px;">{{ item.mode }}</span>
+                                {% endif %}
                             </td>
                             <td>
                                 {% if item.status == 'available' %}
-                                    <span style="color: #4caf50; font-weight: 600;">● 在架上 (Available)</span>
+                                    <span class="status-badge" style="background: #E6F4EA; color: #137333; font-size: 12px;">展示中 (Available)</span>
+                                {% elif item.status == 'exchanged' %}
+                                    <span class="status-badge" style="background: #FEF7E0; color: #B06000; font-size: 12px;">对接中 (Exchanged)</span>
                                 {% elif item.status == 'completed' %}
-                                    <span style="color: var(--text-mute);">○ 已完成交换</span>
+                                    <span class="status-badge" style="background: #F1F3F4; color: #5F6368; font-size: 12px;">已完成归档</span>
                                 {% else %}
-                                    <span style="color: var(--text-mute);">{{ item.status }}</span>
+                                    <span class="status-badge" style="background: #F1F3F4; color: #5F6368; font-size: 12px;">{{ item.status }}</span>
                                 {% endif %}
                             </td>
-                            <td style="font-size: 13px; color: var(--text-mute);">
+                            <td style="font-size: 13px; color: var(--text-mute); font-family: monospace;">
                                 {{ item.create_time.strftime('%Y-%m-%d %H:%M') if item.create_time else '-' }}
                             </td>
                             <td style="text-align: center;">
@@ -76,8 +84,8 @@
             </table>
         {% else %}
             <div style="text-align: center; padding: 40px 0; color: var(--text-mute);">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 10px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <p>未查询到相关的闲置物品记录</p>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 10px; color: var(--text-mute);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <p style="font-family: var(--font-serif);">未查询到相关的闲置物品记录</p>
             </div>
         {% endif %}
     </div>

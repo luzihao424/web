@@ -48,25 +48,38 @@
    ```
 2. **创建虚拟环境**：
    ```powershell
-   python -m venv .venv
+   py -m venv .venv
    ```
 3. **激活虚拟环境**：
    *   **PowerShell 终端**：
        ```powershell
        .\.venv\Scripts\Activate.ps1
        ```
-   *   **CMD (命令提示符) 终端**：
-       ```cmd
-       .\.venv\Scripts\activate.bat
-       ```
+    *   **CMD (命令提示符) 终端**：
+        ```cmd
+        .venv\Scripts\activate.bat
+        ```
    *(激活成功后，你的命令行前缀会出现 `(.venv)` 字样)*
 
+    > 💡 **PowerShell 报错“在此系统上禁止运行脚本”的解决方法**：
+    > 如果激活时遇到该安全策略报错，请先在终端运行以下命令允许当前窗口执行脚本，然后再运行激活命令：
+    > ```powershell
+    > Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+    > ```
+
 ### 4. 安装项目依赖
-虚拟环境激活后，一键安装已锁定版本的顶层依赖（已写入 `requirements.txt`）：
-```powershell
-pip install -r requirements.txt
-```
+虚拟环境激活后，可以使用以下命令一键安装已锁定版本的顶层依赖：
+
+*   **默认官方源安装**：
+    ```powershell
+    pip install -r requirements.txt
+    ```
+*   **国内镜像加速安装（推荐中国大陆用户使用清华源，下载速度极快）**：
+    ```powershell
+    pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+    ```
 > **提示**：我们已精简并锁定了虚拟环境实际用到的顶层依赖（如 `supabase`、`Flask-SQLAlchemy`、`Flask-Login` 等），并特别针对 Python 3.14 锁定了兼容库 `websockets==15.0.1`。
+
 
 ### 5. 初始化本地 SQLite 数据库
 运行以下命令以在本地创建和初始化数据库表结构：
