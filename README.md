@@ -15,37 +15,76 @@
 
 ## 🛠️ 本地部署与运行指南
 
-### 1. 配置虚拟环境 (Python 3.14+)
-1. 克隆项目到本地，使用终端进入 `notes` 目录下。
-2. 配置虚拟环境并激活（以 PowerShell 为例）：
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
+### 1. 新建本地文件夹与克隆代码
+在准备存放项目的磁盘路径下，先创建好一个文件夹并拉取代码：
+
+1. **新建文件夹**：在你的电脑上创建一个工作空间目录，例如 `D:\workspace`。
+2. **打开终端**：进入该目录下，在此处打开你的终端（推荐使用 `PowerShell` 或 `Git Bash`）。
+3. **克隆代码**：在终端内输入以下命令，从 GitHub 拉取项目代码：
+   ```bash
+   git clone https://github.com/luzihao424/web.git
+   ```
+4. **进入工作目录**：
+   ```bash
+   cd web
    ```
 
-### 2. 安装依赖包
-在激活的虚拟环境下运行：
+### 2. 安装指定版本的 Python (3.14.0)
+本项目开发并运行在 **Python 3.14.0** 环境下。请务必安装对应版本以避免依赖库不兼容问题：
+
+*   **方式 A：通过命令行快捷安装（Windows 推荐）**
+    ```powershell
+    winget install Python.Python.3.14 --version 3.14.0
+    ```
+*   **方式 B：官网下载安装包**
+    前往 [Python 3.14.0 官方下载页面](https://www.python.org/downloads/release/python-3140/) 下载对应的系统安装包，并在安装时勾选 **"Add python.exe to PATH"**。
+
+### 3. 创建与激活虚拟环境
+请在终端中切换到项目子目录 `notes` 下，再创建和激活虚拟环境：
+
+1. **进入 notes 目录**：
+   ```bash
+   cd notes
+   ```
+2. **创建虚拟环境**：
+   ```powershell
+   python -m venv .venv
+   ```
+3. **激活虚拟环境**：
+   *   **PowerShell 终端**：
+       ```powershell
+       .\.venv\Scripts\Activate.ps1
+       ```
+   *   **CMD (命令提示符) 终端**：
+       ```cmd
+       .\.venv\Scripts\activate.bat
+       ```
+   *(激活成功后，你的命令行前缀会出现 `(.venv)` 字样)*
+
+### 4. 安装项目依赖
+虚拟环境激活后，一键安装已锁定版本的顶层依赖（已写入 `requirements.txt`）：
 ```powershell
 pip install -r requirements.txt
 ```
+> **提示**：我们已精简并锁定了虚拟环境实际用到的顶层依赖（如 `supabase`、`Flask-SQLAlchemy`、`Flask-Login` 等），并特别针对 Python 3.14 锁定了兼容库 `websockets==15.0.1`。
 
-### 3. 初始化本地 SQLite 数据库
+### 5. 初始化本地 SQLite 数据库
+运行以下命令以在本地创建和初始化数据库表结构：
 ```powershell
 $env:FLASK_APP="app.py"
 flask init-db
 ```
-
-### 4. 数据库升级与迁移 (如果已有数据库)
-若进行了表结构更新，需执行迁移升级：
+若需要进行数据库表结构迁移（升级）：
 ```powershell
 flask db upgrade
 ```
 
-### 5. 运行项目
+### 6. 启动运行
+运行服务主程序：
 ```powershell
 python app.py
 ```
-启动后，可通过浏览器访问本地预览地址：`http://127.0.0.1:5000`
+启动后，即可在浏览器中访问本地预览地址：`http://127.0.0.1:5000`
 
 ---
 
