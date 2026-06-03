@@ -3,29 +3,45 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>时光胶囊 - 管理员后台</title>
-    <!-- 引入 Outfit 现代英文字体 & 苹方/微软雅黑 中文字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>{% block title %}时光胶囊 - 管理员后台{% endblock %}</title>
+    <!-- 引入 Lora, Caveat, Inter 字体及思源宋体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Noto+Serif+SC:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --dark-bg: #0d1117;
-            --sidebar-bg: #161b22;
-            --card-bg: rgba(22, 27, 34, 0.7);
-            --border-color: rgba(240, 134, 86, 0.15);
-            --accent: #ff9f69;
-            --accent-hover: #ffb98f;
-            --text-main: #f0f6fc;
-            --text-mute: #8b949e;
-            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            /* 调色盘同步前台治愈系复古风格 */
+            --bg: #FDFBF7;              /* 暖沙纸张底色 */
+            --sidebar-bg: #F6F0E6;       /* 稍深一些的温暖纸质色，用作左侧侧边栏 */
+            --card-bg: #FFFFFF;         /* 卡片背景 */
+            --border-color: #F2ECE4;    /* 纸张分割边框线 */
+            --border: #F2ECE4;          /* 兼容性纸张分割线 */
+            --accent: #D97706;         /* 焦糖琥珀主色 */
+            --accent-hover: #B45309;   /* 深焦糖褐 */
+            --primary-light: #FEF3C7;   /* 焦糖柔色 */
+            --text-main: #2D251E;       /* 墨水深咖黑 */
+            --text-mute: #7A6F62;       /* 暖灰色 */
+            --shadow: 0 8px 24px rgba(139, 92, 26, 0.04); /* 松软纸质阴影 */
+            --shadow-hover: 0 16px 32px rgba(139, 92, 26, 0.08);
+            
+            /* 圆角变量 */
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+
+            --font-serif: "Lora", "Noto Serif SC", "Georgia", serif;
+            --font-sans: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+            --font-hand: "Caveat", "cursive", sans-serif;
         }
         body {
-            font-family: 'Outfit', -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-            background: var(--dark-bg);
+            font-family: var(--font-sans);
+            background: var(--bg);
             color: var(--text-main);
             display: flex;
             min-height: 100vh;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* 侧边栏 */
@@ -39,20 +55,23 @@
             position: fixed;
             height: 100vh;
             z-index: 100;
+            box-shadow: 4px 0 16px rgba(139, 92, 26, 0.02);
         }
         .sidebar-brand {
+            font-family: var(--font-serif);
             font-size: 20px;
             font-weight: 800;
-            color: var(--accent);
+            color: var(--accent-hover);
             text-decoration: none;
             margin-bottom: 40px;
             display: flex;
             align-items: center;
             gap: 10px;
-            letter-spacing: 0.5px;
+            letter-spacing: -0.5px;
         }
         .sidebar-brand span {
-            background: rgba(255, 159, 105, 0.15);
+            background: var(--primary-light);
+            color: var(--accent-hover);
             padding: 4px 8px;
             border-radius: 6px;
             font-size: 11px;
@@ -63,35 +82,39 @@
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             flex-grow: 1;
         }
         .nav-item a {
             display: flex;
             align-items: center;
-            padding: 14px 16px;
+            padding: 12px 16px;
             color: var(--text-mute);
             text-decoration: none;
             border-radius: 12px;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             gap: 12px;
         }
         .nav-item a:hover {
-            color: var(--text-main);
-            background: rgba(255, 159, 105, 0.08);
+            color: var(--accent-hover);
+            background: rgba(217, 119, 6, 0.05);
         }
         .nav-item.active a {
-            color: var(--dark-bg);
-            background: var(--accent);
+            color: var(--accent-hover);
+            background: var(--primary-light);
             font-weight: 600;
-            box-shadow: 0 4px 15px rgba(255, 159, 105, 0.3);
+            box-shadow: none;
+            border-left: 4px solid var(--accent);
+            border-radius: 0 12px 12px 0;
+            margin-left: -20px;
+            padding-left: 32px;
         }
         .nav-footer a {
             display: flex;
             align-items: center;
             padding: 14px 16px;
-            color: var(--accent);
+            color: var(--accent-hover);
             text-decoration: none;
             border-radius: 12px;
             border: 1px dashed var(--accent);
@@ -101,8 +124,8 @@
         }
         .nav-footer a:hover {
             background: var(--accent);
-            color: var(--dark-bg);
-            box-shadow: 0 4px 15px rgba(255, 159, 105, 0.3);
+            color: #FFFFFF;
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.15);
         }
 
         /* 主体内容 */
@@ -119,10 +142,14 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 15px;
         }
         .content-title {
-            font-size: 28px;
+            font-family: var(--font-serif);
+            font-size: 26px;
             font-weight: 800;
+            color: var(--text-main);
             letter-spacing: -0.5px;
         }
 
@@ -131,23 +158,21 @@
             margin-bottom: 25px;
         }
         .flash-message {
-            background: rgba(255, 159, 105, 0.15);
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 15px 20px;
+            background: #FDF4F5;
+            border: 1px solid #FCE4E6;
+            color: #BE123C;
+            padding: 14px 20px;
             border-radius: 12px;
             font-weight: 500;
-            font-size: 15px;
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        /* 玻璃质感卡片布局 */
+        /* 纯白纸质感卡片布局 */
         .glass-card {
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border-radius: 20px;
             border: 1px solid var(--border-color);
             padding: 30px;
@@ -167,21 +192,22 @@
         }
         th, td {
             padding: 16px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid var(--border-color);
         }
         th {
             font-weight: 600;
             color: var(--text-mute);
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            background: #FCFAF5;
         }
         td {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-main);
         }
         tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(217, 119, 6, 0.02);
         }
 
         /* 搜索框与按钮 */
@@ -189,52 +215,55 @@
             display: flex;
             gap: 12px;
             margin-bottom: 25px;
-            max-width: 500px;
+            max-width: 550px;
         }
         .search-input {
             flex-grow: 1;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #ffffff;
+            border: 1px solid var(--border-color);
             padding: 12px 18px;
             border-radius: 12px;
-            color: #fff;
-            font-size: 15px;
+            color: var(--text-main);
+            font-size: 14px;
             outline: none;
             transition: all 0.3s ease;
         }
         .search-input:focus {
             border-color: var(--accent);
-            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.1);
         }
         .btn-action {
             background: var(--accent);
-            color: var(--dark-bg);
+            color: #FFFFFF;
             font-weight: 600;
             border: none;
             padding: 12px 24px;
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
             font-size: 15px;
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.12);
         }
         .btn-action:hover {
             background: var(--accent-hover);
-            box-shadow: 0 4px 15px rgba(255, 159, 105, 0.3);
+            box-shadow: 0 6px 16px rgba(217, 119, 6, 0.2);
+            color: #FFFFFF;
         }
         .btn-danger {
-            background: rgba(239, 83, 80, 0.15);
-            color: #ef5350;
-            border: 1px solid rgba(239, 83, 80, 0.3);
+            background: #FFF1F2;
+            color: #E11D48;
+            border: 1px solid rgba(244, 63, 94, 0.15);
             font-weight: 600;
             padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
+            font-size: 13px;
         }
         .btn-danger:hover {
-            background: #ef5350;
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(239, 83, 80, 0.3);
+            background: #E11D48;
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.15);
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -255,19 +284,19 @@
             <li class="nav-item {% if '/admin/users' in request.path %}active{% endif %}">
                 <a href="{{ url_for('admin.users') }}">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    用户管理
+                    学生用户管理
                 </a>
             </li>
             <li class="nav-item {% if '/admin/items' in request.path %}active{% endif %}">
                 <a href="{{ url_for('admin.items') }}">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                    物品审查
+                    发布物品审查
                 </a>
             </li>
             <li class="nav-item {% if '/admin/stories' in request.path %}active{% endif %}">
                 <a href="{{ url_for('admin.stories') }}">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                    故事墙审核
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c3.08 0 5.5 2.42 5.5 5.5 0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    故事墙审查
                 </a>
             </li>
         </ul>

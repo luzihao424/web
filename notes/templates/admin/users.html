@@ -11,7 +11,7 @@
         <input type="text" name="q" value="{{ q }}" class="search-input" placeholder="输入学号、昵称、邮箱进行模糊检索...">
         <button type="submit" class="btn-action">搜索</button>
         {% if q %}
-            <a href="{{ url_for('admin.users') }}" class="btn-action" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color:#fff; text-decoration:none; display:flex; align-items:center; justify-content:center;">清除</a>
+            <a href="{{ url_for('admin.users') }}" class="btn-action btn-secondary" style="text-decoration:none; display:flex; align-items:center; justify-content:center;">清除</a>
         {% endif %}
     </form>
 
@@ -33,20 +33,20 @@
                     {% for user in users %}
                         <tr>
                             <td>{{ user.id }}</td>
-                            <td style="font-weight: 600; color: var(--accent);">{{ user.student_id }}</td>
-                            <td>{{ user.nickname }}</td>
+                            <td style="font-weight: 700; color: var(--accent-hover); font-family: monospace; font-size: 15px;">{{ user.student_id }}</td>
+                            <td style="font-weight: 600;">{{ user.nickname }}</td>
                             <td>{{ user.email }}</td>
-                            <td><code>{{ user.contact_info }}</code></td>
+                            <td><code style="background: var(--bg); padding: 3px 6px; border-radius: 4px; border: 1px solid var(--border-color); font-family: monospace;">{{ user.contact_info }}</code></td>
                             <td>
                                 {% if user.is_admin %}
-                                    <span style="background: rgba(255, 159, 105, 0.15); color: var(--accent); padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid var(--accent);">管理员</span>
+                                    <span class="capsule-badge capsule-barter" style="font-size: 12px; font-weight: bold; border-radius: 6px; padding: 4px 10px;">管理员</span>
                                 {% else %}
-                                    <span style="background: rgba(255, 255, 255, 0.05); color: var(--text-mute); padding: 4px 10px; border-radius: 8px; font-size: 13px;">普通学生</span>
+                                    <span class="capsule-badge" style="background: #F1F3F4; color: var(--text-mute); font-size: 12px; border-radius: 6px; padding: 4px 10px; border: 1px solid #E5E7EB;">普通学生</span>
                                 {% endif %}
                             </td>
                             <td style="text-align: center;">
                                 {% if user.id == current_user.id %}
-                                    <span style="color: var(--text-mute); font-size: 14px; font-style: italic;">当前登录账号</span>
+                                    <span style="color: var(--text-mute); font-size: 13px; font-style: italic;">当前登录账号</span>
                                 {% else %}
                                     <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="post" onsubmit="return confirm('警告：确定要删除用户「{{ user.nickname }}」吗？该操作将同时清空该用户发布的所有物品和相关的申请订单，且无法撤销！')">
                                         <button type="submit" class="btn-danger">删除账号</button>
@@ -59,8 +59,8 @@
             </table>
         {% else %}
             <div style="text-align: center; padding: 40px 0; color: var(--text-mute);">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 10px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <p>未查询到匹配的注册学生记录</p>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 10px; color: var(--text-mute);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <p style="font-family: var(--font-serif);">未查询到匹配的注册学生记录</p>
             </div>
         {% endif %}
     </div>

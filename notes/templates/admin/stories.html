@@ -11,31 +11,33 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 60px;">ID</th>
-                        <th style="width: 120px;">胶囊图片</th>
-                        <th>故事故事内容</th>
+                        <th style="width: 80px;">ID</th>
+                        <th style="width: 140px; text-align: center;">胶囊图片</th>
+                        <th>故事回忆内容</th>
                         <th>归档时间</th>
-                        <th style="width: 120px; text-align: center;">操作</th>
+                        <th style="width: 140px; text-align: center;">操作</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for story in stories %}
                         <tr>
-                            <td>{{ story.id }}</td>
-                            <td>
+                            <td style="font-weight: bold; color: var(--text-mute); font-family: monospace; font-size: 15px;">#{{ story.id }}</td>
+                            <td style="text-align: center; vertical-align: middle;">
                                 {% if story.item_image %}
-                                    <img src="{{ story.item_image }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);" alt="故事图片">
+                                    <div style="background: #ffffff; padding: 6px 6px 12px 6px; border-radius: 4px; border: 1px solid #EFE8DF; box-shadow: 0 4px 10px rgba(139, 92, 26, 0.06); display: inline-block; transform: rotate(-1deg); transition: transform 0.3s ease;">
+                                        <img src="{{ story.item_image }}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 2px; border: 1px solid #ECE4DA; display: block;" alt="故事图片">
+                                    </div>
                                 {% else %}
-                                    <span style="color: var(--text-mute); font-size: 13px;">无图片</span>
+                                    <span style="color: var(--text-mute); font-size: 13px; font-style: italic;">无附带图片</span>
                                 {% endif %}
                             </td>
-                            <td style="font-size: 14px; line-height: 1.6; max-width: 400px; word-break: break-all;">
+                            <td style="font-family: var(--font-serif); font-size: 15px; line-height: 1.7; max-width: 450px; word-break: break-all; color: var(--text-main); padding: 18px 20px;">
                                 {{ story.story_content }}
                             </td>
-                            <td style="font-size: 13px; color: var(--text-mute);">
+                            <td style="font-size: 13px; color: var(--text-mute); font-family: monospace;">
                                 {{ story.create_time.strftime('%Y-%m-%d %H:%M') if story.create_time else '-' }}
                             </td>
-                            <td style="text-align: center;">
+                            <td style="text-align: center; vertical-align: middle;">
                                 <form action="{{ url_for('admin.delete_story', story_id=story.id) }}" method="post" onsubmit="return confirm('警告：确定要彻底删除该时光胶囊故事吗？删除后前台匿名故事墙将不再展示此内容！')">
                                     <button type="submit" class="btn-danger">删除隐藏</button>
                                 </form>
@@ -45,9 +47,9 @@
                 </tbody>
             </table>
         {% else %}
-            <div style="text-align: center; padding: 40px 0; color: var(--text-mute);">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 10px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <p>目前故事墙中尚无归档的故事记录</p>
+            <div style="text-align: center; padding: 60px 0; color: var(--text-mute);">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 15px; color: var(--text-mute);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <p style="font-family: var(--font-serif); font-size: 15px;">目前故事墙中尚无归档的故事记录</p>
             </div>
         {% endif %}
     </div>

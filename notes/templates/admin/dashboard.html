@@ -3,8 +3,8 @@
 {% block content %}
 <div class="content-header">
     <h1 class="content-title">控制台仪表盘</h1>
-    <div style="color: var(--text-mute); font-weight: 500;">
-        系统状态：<span style="color: #4caf50; font-weight: bold;">● 运行中</span>
+    <div style="color: var(--text-mute); font-size: 14px; font-weight: 500;">
+        系统状态：<span style="color: #137333; font-weight: bold;">● 正常运行中</span>
     </div>
 </div>
 
@@ -13,43 +13,44 @@
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 25px;
+        gap: 24px;
         margin-bottom: 40px;
     }
     .stat-card {
         background: var(--card-bg);
         border: 1px solid var(--border-color);
-        border-radius: 20px;
-        padding: 25px;
+        border-radius: var(--radius-lg);
+        padding: 24px;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         box-shadow: var(--shadow);
-        transition: transform 0.3s ease, border-color 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
     .stat-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-3px);
         border-color: var(--accent);
+        box-shadow: var(--shadow-hover);
     }
     .stat-icon {
-        background: rgba(255, 159, 105, 0.1);
-        color: var(--accent);
+        background: var(--primary-light);
+        color: var(--accent-hover);
         width: 44px;
         height: 44px;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 5px;
     }
     .stat-number {
-        font-size: 32px;
+        font-family: var(--font-serif);
+        font-size: 30px;
         font-weight: 800;
         color: var(--text-main);
         line-height: 1;
     }
     .stat-label {
-        font-size: 14px;
+        font-size: 13px;
         color: var(--text-mute);
         font-weight: 600;
     }
@@ -64,7 +65,7 @@
         list-style: none;
         display: flex;
         flex-direction: column;
-        gap: 15px;
+        gap: 12px;
         margin-top: 15px;
     }
     .detail-item {
@@ -72,20 +73,23 @@
         justify-content: space-between;
         align-items: center;
         padding: 12px 18px;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: #FCFAF5;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
     }
     .detail-item-title {
         font-weight: 600;
+        font-size: 14px;
+        color: var(--text-main);
     }
     .detail-item-val {
-        background: rgba(255, 159, 105, 0.15);
-        color: var(--accent);
+        background: var(--primary-light);
+        color: var(--accent-hover);
         padding: 4px 10px;
         border-radius: 8px;
         font-weight: 600;
         font-size: 13px;
+        border: 1px solid rgba(217, 119, 6, 0.15);
     }
 </style>
 
@@ -93,7 +97,7 @@
     <!-- 用户总数 -->
     <div class="stat-card">
         <div class="stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
         </div>
         <div class="stat-number">{{ user_count }}</div>
         <div class="stat-label">总注册学生</div>
@@ -102,7 +106,7 @@
     <!-- 物品总数 -->
     <div class="stat-card">
         <div class="stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
         </div>
         <div class="stat-number">{{ item_count }}</div>
         <div class="stat-label">发布闲置总数</div>
@@ -111,7 +115,7 @@
     <!-- 交换总数 -->
     <div class="stat-card">
         <div class="stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <div class="stat-number">{{ exchange_count }}</div>
         <div class="stat-label">成功交换订单</div>
@@ -120,7 +124,7 @@
     <!-- 故事墙总数 -->
     <div class="stat-card">
         <div class="stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c3.08 0 5.5 2.42 5.5 5.5 0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c3.08 0 5.5 2.42 5.5 5.5 0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
         </div>
         <div class="stat-number">{{ story_count }}</div>
         <div class="stat-label">时光胶囊故事</div>
@@ -130,8 +134,8 @@
 <div class="dashboard-details">
     <!-- 物品交换模式占比 -->
     <div class="glass-card">
-        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 10px;">物品交换模式分布</h3>
-        <p style="color: var(--text-mute); font-size: 13px;">查看学生们首选的闲置处理类型</p>
+        <h3 style="font-family: var(--font-serif); font-size: 18px; font-weight: 800; margin-bottom: 6px; color: var(--text-main);">物品交换模式分布</h3>
+        <p style="color: var(--text-mute); font-size: 13px; margin-bottom: 15px;">查看学生们首选的闲置处理类型</p>
         <ul class="detail-list">
             <li class="detail-item">
                 <span class="detail-item-title">以物换物</span>
@@ -155,17 +159,17 @@
     <!-- 系统快速通道 -->
     <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
         <div>
-            <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 10px;">管理员备忘与指引</h3>
-            <p style="color: var(--text-mute); font-size: 14px; line-height: 1.6; margin-bottom: 15px;">
+            <h3 style="font-family: var(--font-serif); font-size: 18px; font-weight: 800; margin-bottom: 8px; color: var(--text-main);">管理员备忘与指引</h3>
+            <p style="color: var(--text-mute); font-size: 14px; line-height: 1.6; margin-bottom: 12px;">
                 欢迎来到“校园闲置时光胶囊”平台管理控制中心！请妥善处理所有违规账号或不良信息，确保良好的校园网络及轻暖的分享环境。
             </p>
             <p style="color: var(--text-mute); font-size: 14px; line-height: 1.6;">
                 如果发现内容违规（如含有虚假广告或不良敏感信息），请在左侧点击 <b>物品审查</b> 或 <b>故事墙审核</b> 进行隐藏或强制下架。
             </p>
         </div>
-        <div style="margin-top: 20px; display: flex; gap: 15px;">
-            <a href="{{ url_for('admin.users') }}" class="btn-action" style="text-align: center; text-decoration: none; padding: 10px 18px; font-size: 14px;">用户管理</a>
-            <a href="{{ url_for('admin.items') }}" class="btn-action" style="text-align: center; text-decoration: none; padding: 10px 18px; font-size: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">审核商品</a>
+        <div style="margin-top: 25px; display: flex; gap: 15px;">
+            <a href="{{ url_for('admin.users') }}" class="btn-action" style="text-decoration: none; padding: 10px 18px; font-size: 14px;">用户管理</a>
+            <a href="{{ url_for('admin.items') }}" class="btn-action btn-secondary" style="text-decoration: none; padding: 10px 18px; font-size: 14px;">审核商品</a>
         </div>
     </div>
 </div>
