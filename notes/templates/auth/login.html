@@ -1,30 +1,38 @@
 {% extends "base.html" %}
 
-{% block title %}登录{% endblock %}
+{% block title %}开启时光胶囊 - 登录{% endblock %}
 
 {% block content %}
-<h2>登录</h2>
-<form method="post">
-    {{ form.hidden_tag() }}
+<div class="auth-form-card">
+    <h2 style="text-align: center; color: var(--primary-hover); font-size: 26px; margin-bottom: 8px;">🔑 开启时光印记</h2>
+    <p class="text-muted" style="text-align: center; margin-bottom: 30px; font-family: var(--font-serif);">输入你的凭证以开启回忆日记本</p>
 
-    <div class="form-group">
-        {{ form.student_id.label(class="form-label") }}
-        {{ form.student_id(class="form-input" + (" is-invalid" if form.student_id.errors else ""), placeholder="请输入学号") }}
-        {% for err in form.student_id.errors %}
-            <div class="error-text" style="color: red; font-size: 13px; margin-top: 4px;">{{ err }}</div>
-        {% endfor %}
-    </div>
+    <form method="post">
+        {{ form.hidden_tag() }}
 
-    <div class="form-group">
-        {{ form.password.label(class="form-label") }}
-        {{ form.password(class="form-input" + (" is-invalid" if form.password.errors else ""), placeholder="请输入密码") }}
-        {% for err in form.password.errors %}
-            <div class="error-text" style="color: red; font-size: 13px; margin-top: 4px;">{{ err }}</div>
-        {% endfor %}
-    </div>
+        <div class="form-group">
+            {{ form.student_id.label(style="font-weight:600;") }}
+            {{ form.student_id(class="form-input", placeholder="请输入您的学号") }}
+            {% for err in form.student_id.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
 
-    <div class="form-group">
-        {{ form.submit(class="btn") }}
-    </div>
-</form>
+        <div class="form-group">
+            {{ form.password.label(style="font-weight:600;") }}
+            {{ form.password(class="form-input", placeholder="请输入您的密码") }}
+            {% for err in form.password.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group" style="margin-top: 30px;">
+            {{ form.submit(class="btn", style="width: 100%; padding: 12px;") }}
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted);">
+            还没有时光账号？<a href="{{ url_for('auth.register') }}" style="color: var(--primary-hover); font-weight: 600; text-decoration: none;">立即封存注册 🚀</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

@@ -1,0 +1,68 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<div class="content-header">
+    <h1 class="content-title">注册用户管理</h1>
+</div>
+
+<div class="glass-card">
+    <!-- 检索框 -->
+    <form class="search-bar" method="get" action="{{ url_for('admin.users') }}">
+        <input type="text" name="q" value="{{ q }}" class="search-input" placeholder="输入学号、昵称、邮箱进行模糊检索...">
+        <button type="submit" class="btn-action">搜索</button>
+        {% if q %}
+            <a href="{{ url_for('admin.users') }}" class="btn-action" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color:#fff; text-decoration:none; display:flex; align-items:center; justify-content:center;">清除</a>
+        {% endif %}
+    </form>
+
+    <div class="table-responsive">
+        {% if users %}
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">ID</th>
+                        <th>学号</th>
+                        <th>昵称</th>
+                        <th>邮箱</th>
+                        <th>联系方式</th>
+                        <th style="width: 120px;">身份角色</th>
+                        <th style="width: 120px; text-align: center;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td style="font-weight: 600; color: var(--accent);">{{ user.student_id }}</td>
+                            <td>{{ user.nickname }}</td>
+                            <td>{{ user.email }}</td>
+                            <td><code>{{ user.contact_info }}</code></td>
+                            <td>
+                                {% if user.is_admin %}
+                                    <span style="background: rgba(255, 159, 105, 0.15); color: var(--accent); padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid var(--accent);">管理员</span>
+                                {% else %}
+                                    <span style="background: rgba(255, 255, 255, 0.05); color: var(--text-mute); padding: 4px 10px; border-radius: 8px; font-size: 13px;">普通学生</span>
+                                {% endif %}
+                            </td>
+                            <td style="text-align: center;">
+                                {% if user.id == current_user.id %}
+                                    <span style="color: var(--text-mute); font-size: 14px; font-style: italic;">当前登录账号</span>
+                                {% else %}
+                                    <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="post" onsubmit="return confirm('警告：确定要删除用户「{{ user.nickname }}」吗？该操作将同时清空该用户发布的所有物品和相关的申请订单，且无法撤销！')">
+                                        <button type="submit" class="btn-danger">删除账号</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="text-align: center; padding: 40px 0; color: var(--text-mute);">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 10px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <p>未查询到匹配的注册学生记录</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

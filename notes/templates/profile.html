@@ -1,77 +1,139 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>个人中心</h2>
-<div class="card">
-    <p><strong>昵称：</strong>{{ current_user.nickname }}</p>
-    <p><strong>学号：</strong>{% if current_user.is_private %}***{% else %}{{ current_user.student_id }}{% endif %}</p>
-    <p><strong>联系方式：</strong>{{ current_user.contact_info }}</p>
-    <a href="{{ url_for('profile.toggle_private') }}" class="btn btn-sm" style="margin-top: 10px;">
-        {% if current_user.is_private %}公开学号信息{% else %}隐藏学号信息{% endif %}
-    </a>
+<div class="hero-banner" style="background: linear-gradient(135deg, #FEF3C7 0%, var(--bg) 100%);">
+    <h1>我的回忆手账本</h1>
+    <p>记录与你产生过连接的所有时光胶囊与温暖旧物 📖</p>
 </div>
 
-<h3>我的发布</h3>
-{% if items %}
-    {% for item in items %}
-    <div class="card">
-        <p><strong>物品名称：</strong>{{ item.title }} ｜ <strong>状态：</strong>
-            {% if item.status == "available" %}
-                <span style="color:#2e7d32; font-weight:bold;">展示中</span>
-            {% elif item.status == "exchanged" %}
-                <span style="color:var(--warm); font-weight:bold;">对接中</span>
-            {% else %}
-                <span class="text-muted">{{ item.status }}</span>
-            {% endif %}
-        </p>
+<div class="detail-container">
+    <!-- 左侧：个人信息与手账统计 -->
+    <div>
+        <div class="card" style="padding: 24px;">
+            <h4 style="font-family: var(--font-serif); font-size: 18px; color: var(--primary-hover); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">👤 个人资料手账</h4>
+            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 15px;">
+                <p>🙋 <b>我的昵称</b>：{{ current_user.nickname }}</p>
+                <p>🆔 <b>我的学号</b>：{% if current_user.is_private %}<span style="letter-spacing: 2px; color: var(--text-muted);">****</span>{% else %}{{ current_user.student_id }}{% endif %}</p>
+                <p>📞 <b>联系方式</b>：<span style="font-family: monospace; background: var(--bg); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border);">{{ current_user.contact_info }}</span></p>
+            </div>
+            
+            <div style="margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 15px;">
+                <a href="{{ url_for('profile.toggle_private') }}" class="btn btn-secondary btn-sm" style="width: 100%;">
+                    {% if current_user.is_private %}🔓 公开我的学号信息{% else %}🔒 隐藏我的学号信息{% endif %}
+                </a>
+            </div>
+        </div>
+        
+        <!-- 手账统计 -->
+        <div class="profile-stat-box">
+            <div class="profile-stat-card">
+                <div class="profile-stat-num">{{ items|length }}</div>
+                <div class="text-muted" style="font-size: 12px; margin-top: 4px;">封存的闲置</div>
+            </div>
+            <div class="profile-stat-card">
+                <div class="profile-stat-num">{{ applies|length }}</div>
+                <div class="text-muted" style="font-size: 12px; margin-top: 4px;">发起的申请</div>
+            </div>
+        </div>
+    </div>
 
-        {% if item.status == "available" %}
-            {% for exchange in item.exchanges %}
-                {% if exchange.status == "pending" %}
-                    <div style="background: #fff9f2; border: 1px solid var(--border); padding: 12px; border-radius: 12px; margin-top: 10px;">
-                        <p><strong>申请人：</strong>{{ exchange.applicant.nickname }}</p>
-                        <p><strong>留言：</strong>{{ exchange.message }}</p>
-                        <a href="{{ url_for('item.approve', ex_id=exchange.id) }}" class="btn btn-sm" style="margin-top: 8px;">同意申请并分享联系方式</a>
+    <!-- 右侧：发布与申请流 -->
+    <div>
+        <!-- 我的发布 -->
+        <h3 style="margin-top: 0; margin-bottom: 16px;">📦 我封存的时光胶囊</h3>
+        {% if items %}
+            {% for item in items %}
+            <div class="card" style="padding: 20px; margin-bottom: 16px; border-left: 4px solid var(--primary);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <h4 style="font-family: var(--font-serif); font-size: 17px; margin: 0; color: var(--text-main);">{{ item.title }}</h4>
+                    <div>
+                        {% if item.status == "available" %}
+                            <span class="status-badge" style="background: #E6F4EA; color: #137333;">展示中(可申请)</span>
+                        {% elif item.status == "exchanged" %}
+                            <span class="status-badge" style="background: #FEF7E0; color: #B06000;">对接中(已同意申请)</span>
+                        {% else %}
+                            <span class="status-badge" style="background: #F1F3F4; color: #5F6368;">{{ item.status }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if item.status == "available" %}
+                    {% set pending_exchanges = [] %}
+                    {% for ex in item.exchanges %}
+                        {% if ex.status == "pending" %}
+                            {% set _ = pending_exchanges.append(ex) %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if pending_exchanges %}
+                        <div style="margin-top: 15px; border-top: 1px dotted var(--border); padding-top: 12px;">
+                            <p style="font-size: 13px; font-weight: bold; color: var(--primary-hover); margin-bottom: 10px;">👇 有人发来了开启胶囊的申请：</p>
+                            {% for exchange in pending_exchanges %}
+                                <div style="background: #FCFAF5; border: 1px dashed #E6DCD0; padding: 16px; border-radius: var(--radius-md); margin-bottom: 10px; position: relative;">
+                                    <p style="font-size: 14px; font-weight: 600; color: var(--text-main);">申请人昵称：{{ exchange.applicant.nickname }}</p>
+                                    <p style="font-family: var(--font-hand); font-size: 18px; color: var(--primary-hover); margin-top: 6px; line-height: 1.4;">
+                                        “ {{ exchange.message }} ”
+                                    </p>
+                                    <div style="text-align: right; margin-top: 12px;">
+                                        <a href="{{ url_for('item.approve', ex_id=exchange.id) }}" class="btn btn-sm">🤝 同意申请并公开联系方式</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted" style="font-size: 13px; margin-top: 10px;">⏳ 暂时还没有收到开启申请，静静等待回忆被唤醒...</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="card" style="text-align: center; padding: 30px;">
+                <p class="text-muted" style="font-size: 14px;">📦 你还没有密封过时光胶囊哦。</p>
+                <a href="{{ url_for('item.publish') }}" class="btn btn-sm" style="margin-top: 12px; color: white;">密封一个胶囊</a>
+            </div>
+        {% endif %}
+
+        <!-- 我的申请 -->
+        <h3 style="margin-top: 40px; margin-bottom: 16px;">🔑 我申请开启的时光胶囊</h3>
+        {% if applies %}
+            {% for ap in applies %}
+            <div class="card" style="padding: 20px; margin-bottom: 16px; border-left: 4px solid var(--accent);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <h4 style="font-family: var(--font-serif); font-size: 17px; margin: 0; color: var(--text-main);">{{ ap.item.title }}</h4>
+                    <div>
+                        {% if ap.status == "pending" %}
+                            <span class="status-badge" style="background: #FEF7E0; color: #B06000;">等待原主人同意</span>
+                        {% elif ap.status == "approved" %}
+                            <span class="status-badge" style="background: #E6F4EA; color: #137333;">申请通过(对接中)</span>
+                        {% elif ap.status == "completed" %}
+                            <span class="status-badge" style="background: #F1F3F4; color: #5F6368;">已归档完成</span>
+                        {% else %}
+                            <span class="status-badge" style="background: #F1F3F4; color: #5F6368;">{{ ap.status }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if ap.status == "approved" %}
+                    <div style="background: #FFF5F6; border: 1px dashed rgba(244, 63, 94, 0.2); padding: 18px; border-radius: var(--radius-md); margin-top: 15px;">
+                        <p style="color: var(--accent); font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 4px;">
+                            🎉 申请已通过！请通过以下方式联系时光保管人进行线下对接：
+                        </p>
+                        <div style="margin-top: 10px; font-size: 14px; display: flex; flex-direction: column; gap: 4px;">
+                            <p>🎒 <b>原主人昵称</b>：{{ ap.item.publisher.nickname }}</p>
+                            <p>📞 <b>联系方式</b>：<span style="font-family: monospace; background: white; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border);">{{ ap.item.publisher.contact_info }}</span></p>
+                        </div>
+                        <div style="margin-top: 15px; text-align: right;">
+                            <a href="{{ url_for('item.complete', ex_id=ap.id) }}" class="btn btn-sm" style="background: var(--accent); box-shadow: 0 4px 12px rgba(244, 63, 94, 0.15);">✅ 确认完成并归档时光胶囊</a>
+                        </div>
                     </div>
                 {% endif %}
-            {% endfor %}
-        {% endif %}
-    </div>
-    {% endfor %}
-{% else %}
-    <div class="card">
-        <p class="text-muted">你还没有发布过物品。</p>
-    </div>
-{% endif %}
-
-<h3>我的申请</h3>
-{% if applies %}
-    {% for ap in applies %}
-    <div class="card">
-        <p><strong>申请物品：</strong>{{ ap.item.title }} ｜ <strong>状态：</strong>
-            {% if ap.status == "pending" %}
-                <span style="color:var(--warm); font-weight:bold;">等待发布者同意</span>
-            {% elif ap.status == "approved" %}
-                <span style="color:#2e7d32; font-weight:bold;">已同意（线下对接中）</span>
-            {% elif ap.status == "completed" %}
-                <span class="text-muted">已完成</span>
-            {% else %}
-                <span>{{ ap.status }}</span>
-            {% endif %}
-        </p>
-        
-        {% if ap.status == "approved" %}
-            <div style="background: #fff9f2; border: 1px solid var(--border); padding: 14px; border-radius: 12px; margin: 12px 0;">
-                <p style="color: var(--warm); font-weight: bold;">🎉 申请已通过！请通过以下方式联系发布者进行线下对接：</p>
-                <p style="margin-top: 6px;"><strong>发布者昵称：</strong>{{ ap.item.publisher.nickname }}</p>
-                <p><strong>联系方式：</strong>{{ ap.item.publisher.contact_info }}</p>
             </div>
-            <a href="{{ url_for('item.complete', ex_id=ap.id) }}" class="btn">确认完成并归档时光胶囊</a>
+            {% endfor %}
+        {% else %}
+            <div class="card" style="text-align: center; padding: 30px;">
+                <p class="text-muted" style="font-size: 14px;">🔑 你还没有申请过其他人的时光胶囊。</p>
+                <a href="{{ url_for('index') }}" class="btn btn-sm" style="margin-top: 12px; color: white;">去胶囊库逛逛</a>
+            </div>
         {% endif %}
     </div>
-    {% endfor %}
-{% else %}
-    <div class="card">
-        <p class="text-muted">你还没有申请过物品。</p>
-    </div>
-{% endif %}
+</div>
 {% endblock %}

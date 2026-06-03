@@ -10,6 +10,7 @@ class User(UserMixin, db.Model):
     contact_info = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     is_private = db.Column(db.Boolean, default=False)
+    is_admin = db.Column(db.Boolean, default=False)
     items = db.relationship("Item", backref="publisher", lazy=True)
     exchanges = db.relationship("Exchange", backref="applicant", lazy=True)
     # 注意：上面 backref="applicant"，不是 "user"

@@ -1,36 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>校园闲置时光胶囊</h2>
-<p>闲置换故事，旧物藏回忆</p>
+<div class="hero-banner">
+    <h1>校园闲置时光胶囊</h1>
+    <p>封存一段故事，唤醒一件旧物。闲置换故事，旧物藏回忆。</p>
+</div>
 
-<h3>可申请的闲置物品</h3>
+<h3>⏳ 正在流转的时光胶囊</h3>
 {% if items %}
-    {% for item in items %}
-    <div class="card">
-        <a href="{{ url_for('item.detail', item_id=item.id) }}" style="text-decoration: none; color: inherit;">
-            {% if item.image_url %}
-            <img src="{{ item.image_url }}" alt="{{ item.title }}">
-            {% endif %}
-            <h4>{{ item.title }}</h4>
-            <p>{{ item.description[:50] }}...</p>
-            <p class="text-muted">胶囊故事：{{ item.story[:30] }}...</p>
-            <p class="text-muted">
-                模式：{{ item.mode }}
-                {% if item.mode == "以物换物" and item.want_item %}
-                    （想换：{{ item.want_item }}）
-                {% elif item.mode == "免费借用" and item.borrow_days %}
-                    （借用：{{ item.borrow_days }}天）
-                {% elif item.mode == "正常买卖" and item.price %}
-                    （金额：￥{{ "%.2f"|format(item.price) }}元）
+    <div class="polaroid-grid">
+        {% for item in items %}
+        <a href="{{ url_for('item.detail', item_id=item.id) }}" class="polaroid-card">
+            <div class="polaroid-image-wrapper">
+                {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                {% else %}
+                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#FAF8F5; color:var(--text-muted); font-size:13px; font-family:var(--font-serif);">
+                        📷 无记忆照片
+                    </div>
                 {% endif %}
-                ｜状态：可申请
-            </p>
+            </div>
+            <div class="polaroid-title">{{ item.title }}</div>
+            <div class="polaroid-desc">{{ item.description }}</div>
+            
+            {% if item.story %}
+                <div class="polaroid-story-preview">“ {{ item.story[:30] }}... ”</div>
+            {% endif %}
+            
+            <div class="polaroid-footer">
+                {% if item.mode == "以物换物" %}
+                    <span class="capsule-badge capsule-barter">🔄 换物{% if item.want_item %}：{{ item.want_item }}{% endif %}</span>
+                {% elif item.mode == "免费借用" %}
+                    <span class="capsule-badge capsule-borrow">🤝 借用{% if item.borrow_days %}：{{ item.borrow_days }}天{% endif %}</span>
+                {% elif item.mode == "正常买卖" %}
+                    <span class="capsule-badge capsule-buy">💰 流转{% if item.price %}：￥{{ "%.2f"|format(item.price) }}{% endif %}</span>
+                {% else %}
+                    <span class="capsule-badge capsule-barter">{{ item.mode }}</span>
+                {% endif %}
+                <span>⏳ 可申请</span>
+            </div>
         </a>
+        {% endfor %}
     </div>
-    {% endfor %}
 {% else %}
-    <div class="card">
-        <p>暂时还没有闲置物品，快来发布第一个吧！</p>
+    <div class="card" style="text-align: center; padding: 50px;">
+        <p class="text-muted" style="font-family: var(--font-serif); font-size: 16px;">
+            💤 暂时还没有被封存的闲置物品，快来发布第一个时光胶囊吧！
+        </p>
+        <a href="{{ url_for('item.publish') }}" class="btn" style="margin-top: 20px;">密封第一个胶囊</a>
     </div>
 {% endif %}
 {% endblock %}

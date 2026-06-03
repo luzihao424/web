@@ -1,11 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>时光胶囊故事墙</h2>
-{% for story in stories %}
-<div class="card">
-    <img src="{{ story.item_image }}">
-    <p>{{ story.story_content }}</p>
-    <small>{{ story.create_time.strftime('%Y-%m-%d') }}</small>
+<div class="hero-banner" style="background: linear-gradient(135deg, #FFF1F2 0%, var(--bg) 100%); border-color: rgba(244, 63, 94, 0.15);">
+    <h1 style="color: var(--accent);">时光胶囊故事墙</h1>
+    <p>交换已经完成，但故事与温存将被永久寄存在这里。💌</p>
 </div>
-{% endfor %}
+
+{% if stories %}
+    <div class="sticky-grid">
+        {% for story in stories %}
+            <div class="sticky-note">
+                {% if story.item_image %}
+                    <img src="{{ story.item_image }}" class="sticky-note-img" alt="回忆配图">
+                {% endif %}
+                <div class="sticky-note-text">
+                    “ {{ story.story_content }} ”
+                </div>
+                <div class="sticky-note-footer">
+                    <span style="font-family: var(--font-hand); font-size: 16px; font-weight: bold; color: var(--accent);">❤️ 暖心流转</span>
+                    <span>🗓️ {{ story.create_time.strftime('%Y-%m-%d') }}</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card" style="text-align: center; padding: 50px;">
+        <p class="text-muted" style="font-family: var(--font-serif); font-size: 16px;">
+            📭 故事墙上空空如也，流转成功的时光胶囊故事会在这里展出哦。
+        </p>
+    </div>
+{% endif %}
 {% endblock %}

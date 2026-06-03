@@ -1,54 +1,62 @@
 {% extends "base.html" %}
 
-{% block title %}注册{% endblock %}
+{% block title %}封存时光账号 - 注册{% endblock %}
 
 {% block content %}
-<h2>注册</h2>
-<form method="post">
-    {{ form.hidden_tag() }}
+<div class="auth-form-card" style="max-width: 520px;">
+    <h2 style="text-align: center; color: var(--primary-hover); font-size: 26px; margin-bottom: 8px;">🚀 封存时光账号</h2>
+    <p class="text-muted" style="text-align: center; margin-bottom: 30px; font-family: var(--font-serif);">注册属于你的专属回忆账户</p>
 
-    <div class="form-group">
-        {{ form.student_id.label(class="form-label") }}
-        {{ form.student_id(class="form-input" + (" is-invalid" if form.student_id.errors else ""), placeholder="请输入学号 (仅限字母和数字, 4-20位)") }}
-        {% for err in form.student_id.errors %}
-            <div class="error-text" style="color: red; font-size: 13px; margin-top: 4px;">{{ err }}</div>
-        {% endfor %}
-    </div>
+    <form method="post">
+        {{ form.hidden_tag() }}
 
-    <div class="form-group">
-        {{ form.password.label(class="form-label") }}
-        {{ form.password(class="form-input" + (" is-invalid" if form.password.errors else ""), placeholder="请输入密码 (至少6位)") }}
-        {% for err in form.password.errors %}
-            <div class="error-text" style="color: red; font-size: 13px; margin-top: 4px;">{{ err }}</div>
-        {% endfor %}
-    </div>
+        <div class="form-group">
+            {{ form.student_id.label(style="font-weight:600;") }}
+            {{ form.student_id(class="form-input", placeholder="请输入学号 (仅限字母和数字, 4-20位)") }}
+            {% for err in form.student_id.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
 
-    <div class="form-group">
-        {{ form.nickname.label(class="form-label") }}
-        {{ form.nickname(class="form-input" + (" is-invalid" if form.nickname.errors else ""), placeholder="请输入昵称 (2-20位)") }}
-        {% for err in form.nickname.errors %}
-            <div class="error-text" style="color: red; font-size: 13px; margin-top: 4px;">{{ err }}</div>
-        {% endfor %}
-    </div>
+        <div class="form-group">
+            {{ form.password.label(style="font-weight:600;") }}
+            {{ form.password(class="form-input", placeholder="请输入密码 (至少6位)") }}
+            {% for err in form.password.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
 
-    <div class="form-group">
-        {{ form.email.label(class="form-label") }}
-        {{ form.email(class="form-input" + (" is-invalid" if form.email.errors else ""), placeholder="请输入邮箱") }}
-        {% for err in form.email.errors %}
-            <div class="error-text" style="color: red; font-size: 13px; margin-top: 4px;">{{ err }}</div>
-        {% endfor %}
-    </div>
+        <div class="form-group">
+            {{ form.nickname.label(style="font-weight:600;") }}
+            {{ form.nickname(class="form-input", placeholder="请输入您的校园昵称 (2-20位)") }}
+            {% for err in form.nickname.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
 
-    <div class="form-group">
-        {{ form.contact_info.label(class="form-label") }}
-        {{ form.contact_info(class="form-input" + (" is-invalid" if form.contact_info.errors else ""), placeholder="请输入微信号/QQ号/手机号") }}
-        {% for err in form.contact_info.errors %}
-            <div class="error-text" style="color: red; font-size: 13px; margin-top: 4px;">{{ err }}</div>
-        {% endfor %}
-    </div>
+        <div class="form-group">
+            {{ form.email.label(style="font-weight:600;") }}
+            {{ form.email(class="form-input", placeholder="请输入您的电子邮箱") }}
+            {% for err in form.email.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
 
-    <div class="form-group">
-        {{ form.submit(class="btn") }}
-    </div>
-</form>
+        <div class="form-group">
+            {{ form.contact_info.label(style="font-weight:600;") }}
+            {{ form.contact_info(class="form-input", placeholder="请输入联系方式 (如微信号/手机号/QQ号)") }}
+            {% for err in form.contact_info.errors %}
+                <div class="error-text">{{ err }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group" style="margin-top: 30px;">
+            {{ form.submit(class="btn", style="width: 100%; padding: 12px;", value="📦 封存注册") }}
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted);">
+            已有时光账号？<a href="{{ url_for('auth.login') }}" style="color: var(--primary-hover); font-weight: 600; text-decoration: none;">直接开启登录 🔑</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

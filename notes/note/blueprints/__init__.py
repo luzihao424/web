@@ -5,4 +5,6 @@ item_bp = Blueprint("item", __name__, template_folder="../../templates")
 profile_bp = Blueprint("profile", __name__, template_folder="../../templates")
 story_bp = Blueprint("story", __name__, template_folder="../../templates")
 
-from . import auth, item, profile, story
+admin_bp = Blueprint("admin", __name__, template_folder="../../templates/admin")
+
+from . import auth, item, profile, story, admin

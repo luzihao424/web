@@ -5,10 +5,11 @@ from note.blueprints.auth import auth_bp
 from note.blueprints.item import item_bp
 from note.blueprints.profile import profile_bp
 from note.blueprints.story import story_bp
+from note.blueprints import admin_bp
 from note.models import User
 
 def create_app(config_name="dev"):
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder="../templates", static_folder="../static")
     app.config.from_object(config_map[config_name])
 
     db.init_app(app)
@@ -23,6 +24,7 @@ def create_app(config_name="dev"):
     app.register_blueprint(item_bp, url_prefix="/item")
     app.register_blueprint(profile_bp, url_prefix="/profile")
     app.register_blueprint(story_bp, url_prefix="/story")
+    app.register_blueprint(admin_bp, url_prefix="/admin")
 
     @app.route("/")
     def index():

@@ -1,4 +1,10 @@
-/* 校园闲置时光胶囊 | 治愈暖橙美化版 */
+/* ==========================================================================
+   校园闲置时光胶囊 | 治愈系复古日记（Healing Retro Diary）
+   ========================================================================== */
+
+/* 引入 Google Fonts 字体库及思源宋体 */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Noto+Serif+SC:wght@300;400;500;600;700;900&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -6,182 +12,607 @@
 }
 
 :root {
-  --warm: #ff9f69;
-  --warm-light: #ffb98f;
-  --bg: #fff9f2;
-  --card: #ffffff;
-  --text: #4a4a4a;
-  --text-light: #777;
-  --border: #f2e5d7;
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  --radius: 16px;
+  /* 调色盘 */
+  --bg: #FDFBF7;              /* 暖沙纸张底色 */
+  --card-bg: #FFFFFF;         /* 卡片背景 */
+  --text-main: #2D251E;       /* 墨水深咖黑 */
+  --text-muted: #7A6F62;      /* 暖灰色 */
+  --primary: #D97706;         /* 焦糖琥珀主色 */
+  --primary-hover: #B45309;   /* 深焦糖褐 */
+  --primary-light: #FEF3C7;   /* 焦糖柔色 */
+  --accent: #F43F5E;          /* 温暖玫瑰红 */
+  --accent-light: #FFF1F2;    /* 软玫瑰粉 */
+  --border: #F2ECE4;          /* 纸张分割边框线 */
+  --shadow: 0 8px 24px rgba(139, 92, 26, 0.05); /* 松软纸质阴影 */
+  --shadow-hover: 0 16px 32px rgba(139, 92, 26, 0.1);
+  
+  /* 圆角 */
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  
+  /* 字体族 */
+  --font-serif: "Lora", "Noto Serif SC", "Georgia", serif;
+  --font-sans: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-hand: "Caveat", "cursive", sans-serif;
 }
 
 body {
-  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: var(--font-sans);
   background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-  padding-bottom: 40px;
+  color: var(--text-main);
+  line-height: 1.7;
+  padding-bottom: 60px;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* 头部导航 */
+/* ==========================================================================
+   Header & Navigation
+   ========================================================================== */
 header {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px 15px;
+  padding: 24px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px dashed var(--border);
 }
 
 .logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--warm);
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primary-hover);
   text-decoration: none;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.2s ease;
+}
+
+.logo:hover {
+  opacity: 0.9;
+}
+
+.logo::before {
+  content: "⏳";
+  font-size: 20px;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 nav a {
-  margin-left: 14px;
-  color: var(--text);
+  color: var(--text-muted);
   text-decoration: none;
-  font-size: 15px;
-  transition: 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
 }
 
 nav a:hover {
-  color: var(--warm);
+  color: var(--primary-hover);
+  background: var(--primary-light);
 }
 
-/* 内容容器 */
+/* ==========================================================================
+   Main Containers & Cards
+   ========================================================================== */
 main {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px 15px;
+  padding: 40px 20px;
 }
 
-/* 卡片 */
 .card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 20px;
-  margin-bottom: 18px;
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  margin-bottom: 24px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  transition: 0.2s;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  position: relative;
 }
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-hover);
 }
 
-.card img {
+/* ==========================================================================
+   拍立得照片卡片 (Polaroid Cards)
+   ========================================================================== */
+.polaroid-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 28px;
+  margin-top: 24px;
+}
+
+.polaroid-card {
+  background: #FFFFFF;
+  padding: 16px 16px 24px 16px;
+  border-radius: 4px; /* 经典相片直角 */
+  box-shadow: 0 6px 16px rgba(139, 92, 26, 0.07);
+  border: 1px solid #EFE8DF;
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+}
+
+.polaroid-card::after {
+  content: "";
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: rgba(122, 111, 98, 0.4);
+}
+
+.polaroid-card:hover {
+  transform: translateY(-8px) rotate(1.5deg);
+  box-shadow: 0 16px 36px rgba(139, 92, 26, 0.14);
+  z-index: 5;
+}
+
+.polaroid-card:nth-child(even):hover {
+  transform: translateY(-8px) rotate(-1.5deg);
+}
+
+.polaroid-image-wrapper {
+  position: relative;
   width: 100%;
-  border-radius: 12px;
-  margin: 12px 0;
-  object-fit: cover;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border: 1px solid #ECE4DA;
+  border-radius: 2px;
+  margin-bottom: 16px;
+  background: #FAF8F5;
 }
 
-/* 按钮 */
+.polaroid-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.polaroid-card:hover img {
+  transform: scale(1.05);
+}
+
+.polaroid-title {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.polaroid-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 41.6px;
+}
+
+.polaroid-story-preview {
+  font-family: var(--font-hand);
+  font-size: 18px;
+  color: var(--primary-hover);
+  border-top: 1px dashed var(--border);
+  padding-top: 10px;
+  margin-top: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.polaroid-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   复古双栏日记本 (Diary Page Detail)
+   ========================================================================== */
+.detail-container {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .detail-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+.diary-paper {
+  background: #FCFAF5;
+  border: 1px solid #E6DCD0;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 24px rgba(139, 92, 26, 0.04);
+  padding: 40px 40px 40px 60px;
+  position: relative;
+  /* 绘制淡雅线条 */
+  background-image: linear-gradient(rgba(217, 119, 6, 0.05) 1px, transparent 1px);
+  background-size: 100% 32px;
+  line-height: 32px;
+}
+
+.diary-paper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 40px;
+  width: 1px;
+  background: rgba(244, 63, 94, 0.2); /* 经典粉红日记本竖分割线 */
+}
+
+.diary-title {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 24px;
+  line-height: 1.3;
+}
+
+.diary-story-content {
+  font-family: var(--font-serif);
+  color: #443B33;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  margin-bottom: 30px;
+}
+
+.diary-story-content p::first-letter {
+  font-size: 32px;
+  float: left;
+  font-weight: bold;
+  color: var(--primary-hover);
+  margin-right: 6px;
+  line-height: 1;
+  padding-top: 4px;
+}
+
+/* ==========================================================================
+   手写便签墙 (Sticky Notes)
+   ========================================================================== */
+.sticky-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 36px;
+  padding-top: 24px;
+}
+
+.sticky-note {
+  background: #FEFCE8;
+  padding: 30px 24px 24px 24px;
+  border-radius: 2px;
+  box-shadow: 0 6px 20px rgba(139, 92, 26, 0.06);
+  border: 1px solid rgba(223, 215, 198, 0.5);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sticky-note::before {
+  /* 半透明胶带 */
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 90px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  backdrop-filter: blur(1.5px);
+  border-left: 1px dashed rgba(0, 0, 0, 0.06);
+  border-right: 1px dashed rgba(0, 0, 0, 0.06);
+  z-index: 2;
+}
+
+.sticky-note:hover {
+  transform: translateY(-6px) rotate(1deg);
+  box-shadow: 0 16px 32px rgba(139, 92, 26, 0.12);
+  z-index: 10;
+}
+
+.sticky-note:nth-child(3n+1) { background: #FEF2F2; } /* 柔粉 */
+.sticky-note:nth-child(3n+2) { background: #F0FDF4; } /* 浅绿 */
+.sticky-note:nth-child(3n+3) { background: #FFFDF5; } /* 奶黄 */
+
+.sticky-note-img {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  border: 1px solid rgba(0,0,0,0.03);
+}
+
+.sticky-note-text {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--text-main);
+  line-height: 1.6;
+  flex-grow: 1;
+}
+
+.sticky-note-footer {
+  margin-top: 14px;
+  border-top: 1px dotted rgba(139, 92, 26, 0.15);
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   胶囊药丸标签 (Capsule Badges)
+   ========================================================================== */
+.capsule-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.capsule-barter {
+  background-color: var(--primary-light);
+  color: var(--primary-hover);
+  border: 1px solid rgba(217, 119, 6, 0.15);
+}
+
+.capsule-borrow {
+  background-color: #ECFDF5;
+  color: #047857;
+  border: 1px solid rgba(4, 120, 87, 0.15);
+}
+
+.capsule-buy {
+  background-color: #FFF1F2;
+  color: var(--accent);
+  border: 1px solid rgba(244, 63, 94, 0.15);
+}
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* ==========================================================================
+   Buttons (按钮系统)
+   ========================================================================== */
 .btn {
-  display: inline-block;
-  background: var(--warm);
-  color: #fff;
+  background: var(--primary);
+  color: #FFFFFF;
   border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
   font-size: 15px;
   cursor: pointer;
   text-decoration: none;
-  transition: 0.2s;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.12);
 }
 
 .btn:hover {
-  background: var(--warm-light);
-  color: #fff;
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(217, 119, 6, 0.2);
+  color: #FFFFFF;
+}
+
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(217, 119, 6, 0.1);
 }
 
 .btn-sm {
   padding: 6px 14px;
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.btn-sm:hover {
+  box-shadow: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  background: var(--primary-light);
+  color: var(--primary-hover);
+  border-color: var(--primary-light);
+}
+
+/* ==========================================================================
+   Form Fields (表单域美化)
+   ========================================================================== */
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-main);
   font-size: 14px;
 }
 
-/* 表单 */
-form {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-form label {
-  display: block;
-  margin: 14px 0 6px;
-  font-weight: 500;
-  color: var(--text);
-}
-
-input, textarea {
+input.form-input, textarea.form-input, select.form-input, input, textarea, select {
   width: 100%;
-  padding: 12px 14px;
+  padding: 12px 16px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   font-size: 15px;
-  background: #fff;
+  background: #ffffff;
   outline: none;
-  transition: 0.2s;
+  font-family: var(--font-sans);
+  color: var(--text-main);
+  transition: all 0.25s ease;
+  box-shadow: inset 0 2px 4px rgba(139, 92, 26, 0.01);
 }
 
-input:focus, textarea:focus {
-  border-color: var(--warm);
+input.form-input:focus, textarea.form-input:focus, select.form-input:focus, input:focus, textarea:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.1);
 }
 
 textarea {
-  min-height: 100px;
+  min-height: 120px;
   resize: vertical;
 }
 
-/* 提示消息 */
-.flash {
-  background: #e8f5e9;
-  color: #2e7d32;
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  text-align: center;
+.error-text {
+  color: var(--accent);
+  font-size: 13px;
+  margin-top: 6px;
+  font-weight: 500;
 }
 
-/* 标题 */
+/* ==========================================================================
+   UI Decorative & Flash Messages
+   ========================================================================== */
+.flash {
+  background: #FDF4F5;
+  color: #BE123C;
+  border: 1px solid #FCE4E6;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 h2 {
-  font-size: 22px;
-  margin-bottom: 16px;
-  color: #333;
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 24px;
+  letter-spacing: -0.5px;
 }
 
 h3 {
-  font-size: 18px;
-  margin: 26px 0 12px;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 36px 0 16px;
 }
 
-/* 布局间距 */
-.item-info {
-  margin: 10px 0;
+.hero-banner {
+  background: linear-gradient(135deg, #FEF3C7 0%, var(--bg) 100%);
+  padding: 50px 30px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.hero-banner h1 {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--primary-hover);
+  margin-bottom: 12px;
+}
+
+.hero-banner p {
+  font-size: 16px;
+  color: var(--text-muted);
+  font-family: var(--font-serif);
 }
 
 .text-muted {
-  color: var(--text-light);
+  color: var(--text-muted);
   font-size: 14px;
 }
 
-/* 故事墙卡片 */
-.story-card {
+.auth-form-card {
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 40px;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+/* ==========================================================================
+   手账记录流 (Profile flow)
+   ========================================================================== */
+.profile-stat-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.profile-stat-card {
+  background: #FFFDF9;
+  border: 1px solid var(--border);
+  padding: 20px;
+  border-radius: var(--radius-md);
   text-align: center;
 }
 
-.story-card p {
-  font-size: 15px;
-  color: #555;
-  line-height: 1.7;
+.profile-stat-num {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--primary-hover);
+  font-family: var(--font-serif);
 }

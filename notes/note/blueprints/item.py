@@ -44,7 +44,7 @@ def publish():
         unique_filename = f"{uuid.uuid4().hex}_{filename}"
         
         # Ensure upload folder exists
-        upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+        upload_folder = os.path.join(current_app.static_folder, 'uploads')
         os.makedirs(upload_folder, exist_ok=True)
         
         # Save file to disk
