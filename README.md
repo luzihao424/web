@@ -48,7 +48,7 @@
    ```
 2. **创建虚拟环境**：
    ```powershell
-   python -m venv .venv
+   py -m venv .venv
    ```
 3. **激活虚拟环境**：
    *   **PowerShell 终端**：
