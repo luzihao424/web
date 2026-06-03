@@ -1,7 +1,7 @@
-flask
-flask-sqlalchemy
-flask-migrate
-flask-login
-flask-wtf
-werkzeug
-supabase
+Flask==3.1.3
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.1.0
+Flask-Login==0.6.3
+Flask-WTF==1.3.0
+supabase==2.18.0
+websockets==15.0.1
