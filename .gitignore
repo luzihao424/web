@@ -21,3 +21,7 @@
 import_issues.ps1
 **/.agent
 **/.agent/
+
+*.db
+.env
+

@@ -4,6 +4,7 @@ from flask import render_template, redirect, url_for, flash, current_app
 from flask_login import login_required, current_user
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from core.s3 import upload_file_to_r2
 from core.extensions import db
 from note.models import Item, Exchange, TimeCapsuleStory
 from note.forms import ItemForm, ExchangeForm
@@ -38,21 +39,33 @@ def publish():
         if mode != '正常买卖':
             price = None
 
-        # Handle file upload
+        # 本地保存版本
+        # # Handle file upload
+        # image_file = form.image.data
+        # filename = secure_filename(image_file.filename)
+        # unique_filename = f"{uuid.uuid4().hex}_{filename}"
+        
+        # # Ensure upload folder exists
+        # upload_folder = os.path.join(current_app.static_folder, 'uploads')
+        # os.makedirs(upload_folder, exist_ok=True)
+        
+        # # Save file to disk
+        # image_path = os.path.join(upload_folder, unique_filename)
+        # image_file.save(image_path)
+        
+        # # Store relative url path
+        # image_url = f"/static/uploads/{unique_filename}"
+
+        # R2 上传版本
         image_file = form.image.data
         filename = secure_filename(image_file.filename)
-        unique_filename = f"{uuid.uuid4().hex}_{filename}"
-        
-        # Ensure upload folder exists
-        upload_folder = os.path.join(current_app.static_folder, 'uploads')
-        os.makedirs(upload_folder, exist_ok=True)
-        
-        # Save file to disk
-        image_path = os.path.join(upload_folder, unique_filename)
-        image_file.save(image_path)
-        
-        # Store relative url path
-        image_url = f"/static/uploads/{unique_filename}"
+        unique_filename= f"{uuid.uuid4().hex}_{filename}"
+
+        try:
+            image_url = upload_file_to_r2(image_file, unique_filename)
+        except Exception as e:
+            flash(f"图片上传失败: {str(e)}")
+            return render_template("publish.html", form=form)
         
         item = Item(
             title=form.title.data,
