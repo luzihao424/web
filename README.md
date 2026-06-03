@@ -55,10 +55,10 @@
        ```powershell
        .\.venv\Scripts\Activate.ps1
        ```
-   *   **CMD (命令提示符) 终端**：
-       ```cmd
-       .\.venv\Scripts\activate.bat
-       ```
+    *   **CMD (命令提示符) 终端**：
+        ```cmd
+        .venv\Scripts\activate.bat
+        ```
    *(激活成功后，你的命令行前缀会出现 `(.venv)` 字样)*
 
 ### 4. 安装项目依赖
