@@ -1,9 +1,34 @@
-from flask import render_template, redirect, url_for, flash, request, session, current_app
+from flask import render_template, redirect, url_for, flash, request, session, current_app, jsonify
 from flask_login import login_user, logout_user
 from core.extensions import db, supabase
 from note.models import User
 from note.forms import RegisterForm, LoginForm
 from . import auth_bp
+
+@auth_bp.route("/send-code", methods=["POST"])
+def send_code():
+    import random
+    data = request.get_json() or {}
+    email = data.get("email", "").strip()
+    if not email:
+        return jsonify({"success": False, "message": "邮箱地址不能为空！"})
+    
+    # 验证邮箱是否已被注册
+    if User.query.filter_by(email=email).first():
+        return jsonify({"success": False, "message": "该邮箱已被注册，请直接登录或更换邮箱！"})
+        
+    code = random.randint(100000, 999999)
+    session["register_email"] = email
+    session["register_code"] = str(code)
+    
+    # 模拟发送验证码，将验证码打印到控制台，以便开发调试
+    print("\n" + "=" * 50)
+    print(f"【校园闲置时光胶囊】注册验证码")
+    print(f"发送目标：{email}")
+    print(f"您的6位验证码为：{code} (有效期至会话结束)")
+    print("=" * 50 + "\n")
+    
+    return jsonify({"success": True, "message": "验证码已成功发送！"})
 
 @auth_bp.route("/register", methods=["GET","POST"])
 def register():
@@ -14,6 +39,19 @@ def register():
         nickname = form.nickname.data
         email = form.email.data
         contact_info = form.contact_info.data
+        input_code = form.verification_code.data
+        
+        # 0. 验证验证码是否正确
+        session_email = session.get("register_email")
+        session_code = session.get("register_code")
+        
+        if not session_email or session_email != email:
+            flash("邮箱与发送验证码的邮箱不一致！")
+            return render_template("register.html", form=form)
+            
+        if not session_code or session_code != input_code:
+            flash("验证码不正确，请重新输入！")
+            return render_template("register.html", form=form)
         
         # 1. 验证学号是否已存在
         if User.query.filter_by(student_id=student_id).first():
@@ -54,6 +92,11 @@ def register():
             )
             db.session.add(user)
             db.session.commit()
+            
+            # 清理会话缓存
+            session.pop("register_email", None)
+            session.pop("register_code", None)
+            
             flash("注册成功，请前往邮箱查收激活确认邮件！")
             return redirect(url_for("auth.login"))
 
@@ -74,6 +117,11 @@ def register():
                     )
                     db.session.add(user)
                     db.session.commit()
+                    
+                    # 清理会话缓存
+                    session.pop("register_email", None)
+                    session.pop("register_code", None)
+                    
                     flash("⚠️ 提示：云端网络连接超时，已自动降级为本地离线模式，免激活注册成功！请直接登录。")
                     return redirect(url_for("auth.login"))
                 except Exception as local_err:
