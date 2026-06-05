@@ -288,23 +288,3 @@ def verify_code():
 
     return render_template("verify.html", form=form, email=email)
 
-
-@auth_bp.route("/resend-code", methods=["POST"])
-def resend_code():
-    pending_user = session.get("pending_user")
-    if not pending_user:
-        flash("未找到待激活的注册信息，请重新注册！")
-        return redirect(url_for("auth.register"))
-
-    email = pending_user.get("email")
-    try:
-        # 调用 Supabase 接口，重新向该邮箱发送注册验证码
-        supabase.auth.resend({
-            "type": "signup",
-            "email": email
-        })
-        flash("验证码已重新发送，请注意查收邮件！")
-    except Exception as e:
-        flash(f"重新发送失败：{str(e)}")
-
-    return redirect(url_for("auth.verify_code"))

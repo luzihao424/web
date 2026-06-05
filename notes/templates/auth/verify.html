@@ -25,37 +25,9 @@
         </div>
     </form>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; font-size: 13px; border-top: 1px dashed var(--border-color); padding-top: 15px;">
-        <span style="color: var(--text-muted);">没收到验证码？</span>
-        <form action="{{ url_for('auth.resend_code') }}" method="post" style="display: inline;">
-            <button type="submit" id="resend-btn" class="btn btn-secondary" style="padding: 6px 14px; font-size: 12px; border-radius: var(--radius-sm);">
-                重新发送
-            </button>
-        </form>
+    <div style="text-align: center; margin-top: 30px; font-size: 13px; border-top: 1px dashed var(--border-color); padding-top: 15px;">
+        没有收到验证码？<a href="{{ url_for('auth.register') }}" style="color: var(--primary-hover); font-weight: 600; text-decoration: none;">返回重新注册 🔄</a>
     </div>
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const resendBtn = document.getElementById("resend-btn");
-    
-    // 如果点击了重新发送，让按钮禁用 60 秒防止重复点击
-    resendBtn.addEventListener("click", function() {
-        let countdown = 60;
-        resendBtn.disabled = true;
-        resendBtn.innerText = `${countdown}s`;
-        
-        const timer = setInterval(function() {
-            countdown--;
-            if (countdown <= 0) {
-                clearInterval(timer);
-                resendBtn.disabled = false;
-                resendBtn.innerText = "重新发送";
-            } else {
-                resendBtn.innerText = `${countdown}s`;
-            }
-        }, 1000);
-    });
-});
-</script>
 {% endblock %}
