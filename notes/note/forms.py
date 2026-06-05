@@ -40,13 +40,6 @@ class RegisterForm(FlaskForm):
             Length(2, 100, message="联系方式长度必须在 2 到 100 位之间")
         ]
     )
-    verification_code = StringField(
-        "验证码",
-        validators=[
-            DataRequired("验证码不能为空"),
-            Length(6, 6, message="验证码必须为 6 位数字")
-        ]
-    )
     submit = SubmitField("注册")
 
 class LoginForm(FlaskForm):
@@ -68,3 +61,13 @@ class ItemForm(FlaskForm):
 class ExchangeForm(FlaskForm):
     message = TextAreaField("申请留言")
     submit = SubmitField("提交申请")
+
+class VerifyForm(FlaskForm):
+    code = StringField(
+        "验证码",
+        validators=[
+            DataRequired("验证码不能为空"),
+            Length(6, 6, message="验证码必须为 6 位数字")
+        ]
+    )
+    submit = SubmitField("确认激活")

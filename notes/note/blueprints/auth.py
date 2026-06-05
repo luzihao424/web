@@ -2,36 +2,90 @@ from flask import render_template, redirect, url_for, flash, request, session, c
 from flask_login import login_user, logout_user
 from core.extensions import db, supabase
 from note.models import User
-from note.forms import RegisterForm, LoginForm
+from note.forms import RegisterForm, LoginForm, VerifyForm
 from . import auth_bp
-
-@auth_bp.route("/send-code", methods=["POST"])
-def send_code():
-    import random
-    data = request.get_json() or {}
-    email = data.get("email", "").strip()
-    if not email:
-        return jsonify({"success": False, "message": "邮箱地址不能为空！"})
-    
-    # 验证邮箱是否已被注册
-    if User.query.filter_by(email=email).first():
-        return jsonify({"success": False, "message": "该邮箱已被注册，请直接登录或更换邮箱！"})
-        
-    code = random.randint(100000, 999999)
-    session["register_email"] = email
-    session["register_code"] = str(code)
-    
-    # 模拟发送验证码，将验证码打印到控制台，以便开发调试
-    print("\n" + "=" * 50)
-    print(f"【校园闲置时光胶囊】注册验证码")
-    print(f"发送目标：{email}")
-    print(f"您的6位验证码为：{code} (有效期至会话结束)")
-    print("=" * 50 + "\n")
-    
-    return jsonify({"success": True, "message": "验证码已成功发送！"})
 
 @auth_bp.route("/register", methods=["GET","POST"])
 def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        student_id = form.student_id.data
+        password = form.password.data
+        nickname = form.nickname.data
+        email = form.email.data
+        contact_info = form.contact_info.data
+        
+        # 1. 验证学号是否已存在于本地数据库
+        if User.query.filter_by(student_id=student_id).first():
+            flash("该学号已被注册，请直接登录！")
+            return render_template("register.html", form=form)
+            
+        # 2. 验证昵称是否已存在
+        if User.query.filter_by(nickname=nickname).first():
+            flash("该昵称已被使用，请换一个昵称！")
+            return render_template("register.html", form=form)
+            
+        # 3. 验证邮箱是否已存在
+        if User.query.filter_by(email=email).first():
+            flash("该邮箱已被注册，请直接登录或更换邮箱！")
+            return render_template("register.html", form=form)
+
+        try:
+            # 尝试通过 Supabase 云端进行注册（这会自动向用户邮箱发送真实的 6 位 OTP 验证码）
+            response = supabase.auth.sign_up({
+                "email": email,
+                "password": password,
+                "options": {
+                    "data": {
+                        "student_id": student_id,
+                        "nickname": nickname,
+                        "contact_info": contact_info
+                    }
+                }
+            })
+
+            # 将未激活的用户数据暂存到 Session 中，等验证码校验通过后再写入本地数据库
+            session["pending_user"] = {
+                "student_id": student_id,
+                "nickname": nickname,
+                "contact_info": contact_info,
+                "email": email,
+                "password": password
+            }
+            
+            flash("验证码已发送至您的邮箱，请输入 6 位数字验证码激活账户！")
+            return redirect(url_for("auth.verify_code"))
+
+        except Exception as e:
+            db.session.rollback()
+            err_msg = str(e).lower()
+            # 在开发环境下，若遇到网络连接超时或网络受限导致握手失败，则自动降级为本地离线数据库注册
+            if current_app.config.get("DEBUG") and ("timeout" in err_msg or "connection" in err_msg or "handshake" in err_msg or "ssl" in err_msg):
+                try:
+                    from werkzeug.security import generate_password_hash
+                    # 本地离线注册：将密码在本地直接加密保存，无需经过云端验证码
+                    user = User(
+                        student_id=student_id,
+                        nickname=nickname,
+                        contact_info=contact_info,
+                        email=email,
+                        password_hash=generate_password_hash(password)
+                    )
+                    db.session.add(user)
+                    db.session.commit()
+                    
+                    flash("⚠️ 提示：云端网络连接超时，已自动降级为本地离线模式，免激活注册成功！请直接登录。")
+                    return redirect(url_for("auth.login"))
+                except Exception as local_err:
+                    db.session.rollback()
+                    flash(f"本地降级注册失败：{str(local_err)}")
+                    return render_template("register.html", form=form)
+            else:
+                flash(f"注册失败：{str(e)}")
+                return render_template("register.html", form=form)
+            
+    return render_template("register.html", form=form)
+    
     form = RegisterForm()
     if form.validate_on_submit():
         student_id = form.student_id.data
@@ -189,3 +243,68 @@ def logout():
     logout_user()
     flash("您已退出登录")
     return redirect(url_for("index"))
+
+@auth_bp.route("/verify", methods=["GET", "POST"])
+def verify_code():
+    # 检查 session 中是否有待激活的用户信息
+    pending_user = session.get("pending_user")
+    if not pending_user:
+        flash("未找到待激活的注册信息，请重新填写注册！")
+        return redirect(url_for("auth.register"))
+
+    form = VerifyForm()
+    email = pending_user.get("email")
+
+    if form.validate_on_submit():
+        code = form.code.data.strip()
+        try:
+            # 调用 Supabase 接口校验 6 位 OTP 验证码
+            supabase.auth.verify_otp({
+                "email": email,
+                "token": code,
+                "type": "signup"
+            })
+
+            # 校验成功后，正式将用户信息存入本地 PostgreSQL 数据库
+            user = User(
+                student_id=pending_user["student_id"],
+                nickname=pending_user["nickname"],
+                contact_info=pending_user["contact_info"],
+                email=email,
+                password_hash=""  # 线上密码交由 Supabase 托管，本地 password_hash 留空
+            )
+            db.session.add(user)
+            db.session.commit()
+
+            # 清除 Session 中暂存的用户数据
+            session.pop("pending_user", None)
+
+            flash("账户激活成功！请使用你的账号密码进行登录。")
+            return redirect(url_for("auth.login"))
+
+        except Exception as e:
+            flash(f"激活失败，验证码错误或已过期：{str(e)}")
+            return render_template("verify.html", form=form, email=email)
+
+    return render_template("verify.html", form=form, email=email)
+
+
+@auth_bp.route("/resend-code", methods=["POST"])
+def resend_code():
+    pending_user = session.get("pending_user")
+    if not pending_user:
+        flash("未找到待激活的注册信息，请重新注册！")
+        return redirect(url_for("auth.register"))
+
+    email = pending_user.get("email")
+    try:
+        # 调用 Supabase 接口，重新向该邮箱发送注册验证码
+        supabase.auth.resend({
+            "type": "signup",
+            "email": email
+        })
+        flash("验证码已重新发送，请注意查收邮件！")
+    except Exception as e:
+        flash(f"重新发送失败：{str(e)}")
+
+    return redirect(url_for("auth.verify_code"))

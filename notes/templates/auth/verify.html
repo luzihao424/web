@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}激活时光账号 - 验证邮箱{% endblock %}
+
+{% block content %}
+<div class="auth-form-card" style="max-width: 480px;">
+    <h2 style="text-align: center; color: var(--primary-hover); font-size: 26px; margin-bottom: 8px;">📬 激活时光账号</h2>
+    <p class="text-muted" style="text-align: center; margin-bottom: 25px; font-family: var(--font-serif);">
+        验证码已发送至：<strong style="color: var(--primary-hover);">{{ email }}</strong>
+    </p>
+
+    <form method="post" action="{{ url_for('auth.verify_code') }}">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group" style="text-align: center; margin-bottom: 25px;">
+            {{ form.code.label(style="font-weight:600; display: block; margin-bottom: 15px; font-size: 16px;") }}
+            {{ form.code(class="form-input", placeholder="请输入 6 位数字验证码", style="text-align: center; font-size: 20px; letter-spacing: 6px; padding: 12px;", maxlength="6", autocomplete="off") }}
+            {% for err in form.code.errors %}
+                <div class="error-text" style="text-align: center; margin-top: 5px;">{{ err }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.submit(class="btn", style="width: 100%; padding: 12px; font-size: 16px;", value="✨ 确认激活账户") }}
+        </div>
+    </form>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; font-size: 13px; border-top: 1px dashed var(--border-color); padding-top: 15px;">
+        <span style="color: var(--text-muted);">没收到验证码？</span>
+        <form action="{{ url_for('auth.resend_code') }}" method="post" style="display: inline;">
+            <button type="submit" id="resend-btn" class="btn btn-secondary" style="padding: 6px 14px; font-size: 12px; border-radius: var(--radius-sm);">
+                重新发送
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const resendBtn = document.getElementById("resend-btn");
+    
+    // 如果点击了重新发送，让按钮禁用 60 秒防止重复点击
+    resendBtn.addEventListener("click", function() {
+        let countdown = 60;
+        resendBtn.disabled = true;
+        resendBtn.innerText = `${countdown}s`;
+        
+        const timer = setInterval(function() {
+            countdown--;
+            if (countdown <= 0) {
+                clearInterval(timer);
+                resendBtn.disabled = false;
+                resendBtn.innerText = "重新发送";
+            } else {
+                resendBtn.innerText = `${countdown}s`;
+            }
+        }, 1000);
+    });
+});
+</script>
+{% endblock %}
