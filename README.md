@@ -2,6 +2,8 @@
 
 “闲置换故事，旧物藏回忆。” —— 这是一个温暖的、以故事与情感为导向的校园闲置物品流转与回忆寄存平台。
 
+🌐 **在线发布地址**：[https://time-capsule-dj2j.onrender.com](https://time-capsule-dj2j.onrender.com)
+
 ---
 
 ## 🎨 视觉风格说明
